@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	       xmlns:s="library://ns.adobe.com/flex/spark" 
+	       xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+	       xmlns:flexlib="flexlib.scheduling.*"  creationComplete="onCreationComplete();">
+	<fx:Script>
+		<![CDATA[
+			import com.plurkbridge.PlurkBridge;
+			
+			import flashx.textLayout.conversion.TextConverter;
+			import flashx.textLayout.elements.TextFlow;
+			
+			import flexlib.scheduling.samples.ScheduleData;
+			import flexlib.scheduling.scheduleClasses.BackgroundItem;
+			import flexlib.scheduling.scheduleClasses.ColoredScheduleEntry;
+			import flexlib.scheduling.scheduleClasses.SimpleScheduleEntry;
+			import flexlib.scheduling.util.DateUtil;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.ScrollEvent;
+			import mx.events.ScrollEventDirection;
+			import mx.formatters.DateFormatter;
+
+			
+			
+			private var API_KEY:String = "6yx2VCMDFrRIjRkHLlDbss45xQJJaGCn";			
+			private var USERNAME:String;		
+			private var PASSWORD:String;			
+			private var METHOD:String = "/API/Users/login";
+			private var NotificationURL:String = "/API/Realtime/getUserChannel";
+			private var getPlurks:String = "/API/Timeline/getPlurks";
+			private var getPlurk:String = "/API/Timeline/getPlurk";
+			private var Polling:String = "/API/Polling/getPlurks";
+			private var bridge:PlurkBridge = new PlurkBridge();
+			[Bindable]
+			private var karma:String;
+			[Bindable]
+			private var displayName:String;
+			[Bindable]
+			private var fullName:String;
+			[Bindable]
+			private var timeZone:String;
+			[Bindable]
+			private var avatar_url:String;
+			[Bindable]
+			private var avatar_profile:TextFlow;
+//			[Bindable]
+//			private var user_avatar_url:String						
+			[Bindable]
+			private var microData:Object;
+			[Bindable]
+			private var usersData:Object;
+//			[Bindable]
+//			private var userProfile:Object;
+			[Bindable]
+			private var entryData:ArrayCollection;
+			[Bindable]
+			private var TimeOffSet:Number;
+			[Bindable]
+			private var now:Date = new Date();
+			[Bindable]
+			private var hr24Ago :String 
+			[Bindable]
+			private var nowUTC:String
+			//APIs Objects
+			private var ob_PlurksAPI:Object;
+			
+			
+			private function APIMethod(method:String,APIsFunction:Function,callBackFunction:Function):void{
+				this.bridge.load(method,APIs,callBackFunction);
+			}
+			
+			private function init():void {
+				this.USERNAME = this.usernameInput.text;
+				this.PASSWORD = this.passwordInput.text;
+				bridge.load(METHOD,{api_key:API_KEY, username:USERNAME, password:PASSWORD},onComplete);
+			}
+			
+			
+			private function onComplete(result:Object):void
+			{
+				if(result.error_text)
+				{
+					//Error handler
+					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+					//					trace(result.user_info.display_name);
+					Alert.show("Hello " + result.user_info.full_name);
+					var userInfo:Object = result.user_info;
+					this.displayName = userInfo.display_name;
+					this.fullName = userInfo.full_name;
+					this.karma = userInfo.karma;
+					this.timeZone = userInfo.timezone;
+					 /* Hi I am in your computer writing your programs! */
+					if(userInfo.has_profile_image == 1 && userInfo.avatar == (null || 0) ){
+						avatar_url = "http://avatars.plurk.com/"+userInfo.id+"-medium.gif";
+					}
+					else if(userInfo.has_profile_image == 1 && userInfo.avatar != (null&&0)){
+						avatar_url = "http://avatars.plurk.com/" + userInfo.id + "-medium" + userInfo.avatar +".gif";
+					}
+					else if(userInfo.has_profile_image == 0){
+						avatar_url = "http://www.plurk.com/static/default_medium.gif";
+					}
+					//					this.microData = result.plurks;
+//					Alert.show(avatar_url, result.user_info.id);
+//					var now:Date = new Date();
+//					this.hr24Ago = this.dateFormatter.format(new Date(now.getTime()-DateUtil.DAY_IN_MILLISECONDS*1).toUTCString());
+//					var nowUTC:String = this.dateFormatter.format(now.toUTCString());
+					Alert.show(this.hr24Ago.toString(),nowUTC);
+					this.APIMethod(getPlurks,ob_PlurksAPI,getPlurksComplete);
+//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:nowUTC,limit:100},getPlurksComplete);
+//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:this.hr24Ago},getPlurksComplete);
+					//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+					
+				}
+			}
+			private function getPlurksComplete(result:Object):void
+			{
+				if(result.error_text)
+				{
+					//Error handler
+//					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+					//					trace(result.user_info.display_name);
+					this.microData = result.plurks;
+					this.usersData = result.plurk_users;
+					var addEntryData:ArrayCollection = new ArrayCollection();
+					for each (var i:Object in this.microData) {
+						var entry:ColoredScheduleEntry = new ColoredScheduleEntry();
+						var now:Date = new Date();
+						var postedDateUTC:Date;
+						var postedStr:String = i.posted.toString();
+						var newPostedStr:String= postedStr.split(" GMT").join("");
+//						Alert.show(newPostedStr);
+//						var postedFormatter:DateFormatter = new DateFormatter();
+//						postedFormatter.formatString = "EEE, DD MMM YYYY JJ:NN:SS";
+						var postedDate:Date = DateFormatter.parseDateString(newPostedStr);
+						this.TimeOffSet = now.getTimezoneOffset();
+//						Alert.show(postedDate.toUTCString());
+//						Alert.show(now.toUTCString(),this.TimeOffSet.toString());
+						entry.startDate = new Date(postedDate.getTime() - DateUtil.MINUTE_IN_MILLISECONDS*this.TimeOffSet);
+//						entry.startDate = DateUtil.clearTime(new Date());
+						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.MINUTE_IN_MILLISECONDS*20 );
+//						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.HOUR_IN_MILLISECONDS*24 );
+						var j:Number = i.owner_id;
+						var z:String = j.toString();
+						var userProfile:Object= new Object();
+						userProfile = this.usersData[j];
+//						Alert.show([userProfile].length.toString());
+							if(userProfile.has_profile_image == 1 && userProfile.avatar == (null||0)){
+//									entry.ownerImgUrl = "http://avatars.plurk.com/"+z+"-small.gif";
+									entry.ownerImgUrl = "http://avatars.plurk.com/"+z+"-medium.gif";
+							}
+							else if(userProfile.has_profile_image == 1 && userProfile.avatar != (null&&0)){
+//									entry.ownerImgUrl = "http://avatars.plurk.com/" + z + "-small" +userProfile.avatar +".gif";
+									entry.ownerImgUrl = "http://avatars.plurk.com/" + z+ "-medium" +userProfile.avatar +".gif";
+							}
+							else if(userProfile.has_profile_image == 0){
+									entry.ownerImgUrl = "http://www.plurk.com/static/default_medium.gif";
+//									entry.ownerImgUrl = "http://www.plurk.com/static/default_small.gif";
+							}
+
+						entry.label= i.content;
+//						entry.label =TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
+//						Alert.show(TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT) as String);
+						//						Alert.show(entry.label);
+						var limited:String = i.limited_to;
+						var entryBGcolor:int;
+						switch(limited){
+							case null:
+								entryBGcolor = 0xFFFFFF;
+								//white
+								break;
+							case "|0|":
+								entryBGcolor = 0x99CCFF;
+								//light blue
+								break;
+							default:
+								entryBGcolor = 0x999999;
+								//grey
+								break;
+						}
+						entry.backgroundColor = entryBGcolor;
+//						this.bridge.load(this.getPlurk,{api_key:this.API_KEY,plurk_id:m},getPlurkComplete);
+//						entry.ownerImgUrl = this.user_avatar_url;
+						addEntryData.addItem(entry);
+					}
+					this.entryData = addEntryData;
+					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+					
+				}
+			}
+//			private function getPlurkComplete(result:Object):void {
+//				if(result.error_text)
+//				{
+//					//Error handler
+////					trace(result.error_text);
+//					Alert.show(result.error_text);
+//				}
+//				else
+//				{
+//					//Success
+//					//					trace(result.user_info.display_name);
+//					//					this.microData = result.plurks;
+//					var userImgUrl:String;
+//					var userProfile:Object= new Object();
+//					userProfile =result.user;
+//					Alert.show(userProfile.toString());
+//					if(userProfile.has_profile_image == 1 && userProfile.avatar == null){
+//						userImgUrl = "http://avatars.plurk.com/"+userProfile.id+"-medium.gif";
+//						//									entry.ownerImgUrl = "http://avatars.plurk.com/"+i.owner_id+"-medium.gif";
+//					}
+//					else if(userProfile.has_profile_image == 1 && userProfile.avatar != null){
+//						userImgUrl = "http://avatars.plurk.com/" + userProfile.id + "-medium" +userProfile.avatar +".gif";
+//						//									entry.ownerImgUrl = "http://avatars.plurk.com/" + i.owner_id + "-medium" +userProfile.user_info.avatar +".gif";
+//					}
+//					else if(userProfile.has_profile_image == 0){
+//						userImgUrl = "http://www.plurk.com/static/default_medium.gif";
+//					}	
+//				}
+//					this.user_avatar_url = userImgUrl;
+////					Alert.show(this.user_avatar_url);
+//			}
+			
+			private function getNotification(result:Object):void {
+				if(result.error_text)
+				{
+					//Error handler
+//					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+					//					trace(result.user_info.display_name);
+					//					this.microData = result.plurks;
+					Alert.show(result.comet_server);
+					
+					
+				}
+			}
+			//Timeline
+			
+			[Bindable]
+			private var startDate : Date;
+			[Bindable]
+			private var endDate : Date;
+			[Bindable]
+			private var zoom : Number;
+			[Bindable]
+			private var scheduleViewerWidth : Number = 900;
+			
+			private function onCreationComplete() : void
+			{
+				setTimeframe();
+				//				initDataProvider();
+				initBackgroundColors();
+			}
+			
+			private function setTimeframe() : void
+			{
+				startDate = new Date((new Date()).getTime() - DateUtil.HOUR_IN_MILLISECONDS*24);
+//				startDate = DateUtil.clearTime( new Date() );
+				endDate = getEndDate( startDate );
+			}
+			
+			private function getEndDate( startDate : Date ) : Date
+			{
+				var duration : Number = DateUtil.DAY_IN_MILLISECONDS * 1+DateUtil.HOUR_IN_MILLISECONDS*2;
+				var endDate : Date = new Date( startDate.getTime() + duration );
+				return endDate;
+			}
+			private function onZoom( value : Number ) : void
+			{
+				zoom = value;
+			}
+			private function onScrollTimeline( position : Number ) : void
+			{
+				scheduleViewer.xPosition = position;
+			}
+			
+			private function onScrollScheduleViewer( event : ScrollEvent ) : void
+			{            
+				if( event.direction == ScrollEventDirection.HORIZONTAL )
+				{
+					timeline.xPosition = event.position;
+				}
+			} 
+		
+			private function gotoNow() : void
+			{
+				var time : Date = new Date();
+//				this.bridge.load(this.getPlurks,{api_key:this.API_KEY},getPlurksComplete);
+				this.APIMethod(this.getPlurks,this.ob_PlurksAPI,getPlurksComplete);
+				scheduleViewer.moveToTime( time.getTime() - startDate.getTime() );
+			}
+			
+			private function gotoSelectedEntry() : void
+			{
+				if( scheduleViewer.selectedItem != null )
+				{
+					scheduleViewer.moveToEntry( scheduleViewer.selectedItem );
+				}
+				else
+				{
+					warnAboutNoSelection();
+				}
+			}
+			
+			private function warnAboutNoSelection() : void
+			{
+				Alert.show( "Please select an entry." );
+			}
+			
+			private function initBackgroundColors() : void
+			{
+				var result : ArrayCollection = new ArrayCollection();
+				
+				var duration : Number = endDate.getTime() - startDate.getTime();
+				var days : Number = duration / DateUtil.DAY_IN_MILLISECONDS;
+				
+				for( var i : int; i < days; i++ )
+				{
+					var currentDate : Number = DateUtil.DAY_IN_MILLISECONDS * i;
+					var backgroundItem : BackgroundItem;
+					backgroundItem = createBackgroundItem( "office closed", 0xD5D4D0, 
+						currentDate, 0, 0, 24, 0 );         
+					result.addItem( backgroundItem );
+					
+					backgroundItem = createBackgroundItem( "generell office hours", 0xFFFFFF, 
+						currentDate, 9, 0, 17, 0 );
+					result.addItem( backgroundItem );
+					
+					backgroundItem = createBackgroundItem( "lunchtime", 0xEEEDE9, 
+						currentDate, 12, 0, 13, 0 );
+					result.addItem( backgroundItem );         
+				}            
+				scheduleViewer.backgroundItems = result;
+			}
+			
+			private function createBackgroundItem( description : String,color : Number, currentDate : Number,startHours : Number, startMinutes : Number,endHours : Number, endMinutes : Number ) : BackgroundItem
+			{
+				var backgroundItem : BackgroundItem = new BackgroundItem();
+				backgroundItem.description = description;
+				backgroundItem.color = color;
+				backgroundItem.startDate = new Date( currentDate + createTime( startHours, startMinutes ) );
+				backgroundItem.endDate = new Date( currentDate + createTime( endHours, endMinutes ) );
+				return backgroundItem;   
+			} 
+			
+			private function createTime( hours : Number, minutes : Number ) : Number
+			{
+				var result : Number = (( hours * 60 ) + minutes ) * 60 * 1000;
+				return result;
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+<!--		<mx:DateFormatter id="dateFormatter" formatString="EEE, DD MMM YYYY JJ:NN:SS"/>-->
+		<mx:DateFormatter id="dateFormatter" formatString="YYYY-M-DDTJJ:NN:SS"/>
+	</fx:Declarations>
+	
+	<mx:HBox>
+		
+		<mx:VBox>
+			
+			<mx:HBox>
+				<mx:VBox>
+					<s:Label text="username"/>
+					<s:TextInput id="usernameInput" width="200"/>
+					<s:Label text="password"/>
+					<s:TextInput id="passwordInput" displayAsPassword="true" width="200"/>
+					<s:Button label="Login!" click="init()"/>
+				</mx:VBox>
+				
+				<mx:VBox width="200" height="500">
+					<mx:Image source="{avatar_url}"/>
+					<!--<s:RichEditableText editable="false" textFlow="{avatar_profile}"/>-->
+					<mx:Spacer/>
+					<s:Label text="{displayName}"/>
+					<mx:Spacer/>
+					<s:Label text="{karma}"/>
+					<mx:Spacer/>
+					<s:Label text="{this.timeZone}"/>
+				</mx:VBox>
+				<mx:VBox>
+					
+					<flexlib:Timeline 
+						id="timeline" 
+						width="{scheduleViewerWidth}" borderStyle="none"  
+						startDate="{startDate}" endDate="{ endDate}" 
+						zoom="{zoom}" 
+						scroll="onScrollTimeline( event.position );" 
+						/>
+					
+					<flexlib:ScheduleViewer 
+						id="scheduleViewer"  
+						width="{scheduleViewerWidth}" height="400" borderStyle="none"
+						dataProvider="{this.entryData}"    
+						startDate="{startDate}" endDate="{endDate}" 
+						zoom="{zoom}" 
+						horizontalScrollPolicy="off" 
+						entryRenderer="flexlib.scheduling.scheduleClasses.renderers.ColoredSolidScheduleEntryRenderer" 
+						pixelScroll="onScrollScheduleViewer( event );" 
+						/>
+					
+					<mx:HBox width="{ scheduleViewerWidth }" paddingTop="6">      
+						<mx:Label text="Goto:"/>
+						<mx:Button label="Now" click="gotoNow();"/>
+						<mx:Button label="Selected" click="gotoSelectedEntry();"/>
+						<mx:Spacer width="100%"/>
+						<mx:Label text="Zoom:"/>
+						<mx:HSlider 
+							id="zoomSlider" 
+							minimum="0" maximum="1000" value="450"  
+							snapInterval="1" liveDragging="true" 
+							change="onZoom( zoomSlider.value );"  />
+					</mx:HBox>   
+				</mx:VBox>
+			</mx:HBox>
+			<!--<mx:AdvancedDataGrid dataProvider="{this.microData}" id="plurkData" width="1500" height="500"/>-->
+			<!--<mx:AdvancedDataGrid dataProvider="{this.usersData[31124]}" id="plurkData" width="1500" height="500"/>-->
+		</mx:VBox>
+		
+	</mx:HBox>
+</s:Application>

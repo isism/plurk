@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	       xmlns:s="library://ns.adobe.com/flex/spark" 
+	       xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+	      xmlns:flexlib="flexlib.scheduling.*"  creationComplete="onCreationComplete();">
+	<fx:Script>
+		<![CDATA[
+			import com.plurkbridge.PlurkBridge;
+			
+			import flexlib.scheduling.samples.ScheduleData;
+			import flexlib.scheduling.scheduleClasses.BackgroundItem;
+			import flexlib.scheduling.scheduleClasses.ColoredScheduleEntry;
+			import flexlib.scheduling.scheduleClasses.SimpleScheduleEntry;
+			import flexlib.scheduling.util.DateUtil;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.ScrollEvent;
+			import mx.events.ScrollEventDirection;
+			import mx.messaging.channels.StreamingAMFChannel;   
+			
+			
+			private var API_KEY:String = "6yx2VCMDFrRIjRkHLlDbss45xQJJaGCn";			
+			private var USERNAME:String;		
+			private var PASSWORD:String;			
+			private var METHOD:String = "/API/Users/login";
+			private var NotificationURL:String = "/API/Realtime/getUserChannel";
+			private var getPlurks:String = "/API/Timeline/getPlurks";
+			private var bridge:PlurkBridge = new PlurkBridge();
+			[Bindable]
+			private var karma:String;
+			[Bindable]
+			private var displayName:String;
+			[Bindable]
+			private var fullName:String;
+			[Bindable]
+			private var timeZone:String;
+			[Bindable]
+			private var microData:Object;
+			[Bindable]
+			private var entryData:ArrayCollection;
+			
+			private function init():void {
+				this.USERNAME = this.usernameInput.text;
+				this.PASSWORD = this.passwordInput.text;
+			bridge.load(METHOD,{api_key:API_KEY, username:USERNAME, password:PASSWORD},onComplete);
+			}
+			
+			private function onComplete(result:Object):void
+			{
+				if(result.error_text)
+				{
+					//Error handler
+					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+//					trace(result.user_info.display_name);
+					Alert.show("Hello " + result.user_info.full_name);
+						
+					this.displayName = result.user_info.display_name;
+					this.fullName = result.user_info.full_name;
+					this.karma = result.user_info.karma;
+					this.timeZone = result.user_info.timezone;
+//					this.microData = result.plurks;
+					this.bridge.load(this.getPlurks,{api_key:this.API_KEY},getPlurksComplete);
+//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+
+				}
+			}
+			private function getPlurksComplete(result:Object):void
+			{
+				if(result.error_text)
+				{
+					//Error handler
+					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+//					trace(result.user_info.display_name);
+					this.microData = result.plurks;
+					var addEntryData:ArrayCollection = new ArrayCollection();
+					for each (var i:Object in this.microData) {
+						var entry:ColoredScheduleEntry = new ColoredScheduleEntry();
+						entry.startDate = DateUtil.clearTime(new Date());
+						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.HOUR_IN_MILLISECONDS*24 );
+//						entry.startDate = Date(i.posted);
+						
+						entry.label = i.content;
+//						Alert.show(entry.label);
+//						var limited:Array = i.limited_to;
+						var limited:String = i.limited_to;
+//						Alert.show(limited);
+						var entryBGcolor:int;
+						switch(limited){
+							case null:
+								entryBGcolor = 0xFF0000;
+								break;
+							case [0]:
+								entryBGcolor = 0xFF8800;
+								break;
+//							case "2":
+//								entryBGcolor = 0x3399cc;
+//								break;
+							default:
+								entryBGcolor = 0x3399CC;
+								break;
+						}
+						entry.backgroundColor = entryBGcolor;
+						addEntryData.addItem(entry);
+					}
+					this.entryData = addEntryData;
+					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+
+				}
+			}
+			
+			private function getNotification(result:Object):void {
+				if(result.error_text)
+				{
+					//Error handler
+					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+					//					trace(result.user_info.display_name);
+//					this.microData = result.plurks;
+					Alert.show(result.comet_server);
+					
+					
+				}
+			}
+			//Timeline
+			
+			[Bindable]
+			private var startDate : Date;
+			[Bindable]
+			private var endDate : Date;
+			[Bindable]
+			private var zoom : Number;
+			[Bindable]
+			private var scheduleViewerWidth : Number = 900;
+			
+			private function onCreationComplete() : void
+			{
+				setTimeframe();
+//				initDataProvider();
+				initBackgroundColors();
+			}
+			
+			private function setTimeframe() : void
+			{
+				startDate = DateUtil.clearTime( new Date() );
+				endDate = getEndDate( startDate );
+			}
+			
+			private function getEndDate( startDate : Date ) : Date
+			{
+				var duration : Number = DateUtil.DAY_IN_MILLISECONDS * 1;
+				var endDate : Date = new Date( startDate.getTime() + duration );
+				return endDate;
+			}
+			private function onZoom( value : Number ) : void
+			{
+				zoom = value;
+			}
+			private function onScrollTimeline( position : Number ) : void
+			{
+				scheduleViewer.xPosition = position;
+			}
+			
+ 			private function onScrollScheduleViewer( event : ScrollEvent ) : void
+			{            
+				if( event.direction == ScrollEventDirection.HORIZONTAL )
+				{
+					timeline.xPosition = event.position;
+				}
+			} 
+			
+			private function gotoNow() : void
+			{
+				var time : Date = new Date();
+				scheduleViewer.moveToTime( time.getTime() - startDate.getTime() );
+			}
+			
+			private function gotoSelectedEntry() : void
+			{
+				if( scheduleViewer.selectedItem != null )
+				{
+					scheduleViewer.moveToEntry( scheduleViewer.selectedItem );
+				}
+				else
+				{
+					warnAboutNoSelection();
+				}
+			}
+			
+			private function warnAboutNoSelection() : void
+			{
+				Alert.show( "Please select an entry." );
+			}
+			
+			private function initBackgroundColors() : void
+			{
+				var result : ArrayCollection = new ArrayCollection();
+				
+				var duration : Number = endDate.getTime() - startDate.getTime();
+				var days : Number = duration / DateUtil.DAY_IN_MILLISECONDS;
+				
+				for( var i : int; i < days; i++ )
+				{
+					var currentDate : Number = DateUtil.DAY_IN_MILLISECONDS * i;
+					var backgroundItem : BackgroundItem;
+					backgroundItem = createBackgroundItem( "office closed", 0xD5D4D0, 
+						currentDate, 0, 0, 24, 0 );         
+					result.addItem( backgroundItem );
+					
+					backgroundItem = createBackgroundItem( "generell office hours", 0xFFFFFF, 
+						currentDate, 9, 0, 17, 0 );
+					result.addItem( backgroundItem );
+					
+					backgroundItem = createBackgroundItem( "lunchtime", 0xEEEDE9, 
+						currentDate, 12, 0, 13, 0 );
+					result.addItem( backgroundItem );         
+				}            
+				scheduleViewer.backgroundItems = result;
+			}
+			
+ 			private function createBackgroundItem( description : String,color : Number, currentDate : Number,startHours : Number, startMinutes : Number,endHours : Number, endMinutes : Number ) : BackgroundItem
+			{
+				var backgroundItem : BackgroundItem = new BackgroundItem();
+				backgroundItem.description = description;
+				backgroundItem.color = color;
+				backgroundItem.startDate = new Date( currentDate + createTime( startHours, startMinutes ) );
+				backgroundItem.endDate = new Date( currentDate + createTime( endHours, endMinutes ) );
+				return backgroundItem;   
+			} 
+			
+			private function createTime( hours : Number, minutes : Number ) : Number
+			{
+				var result : Number = (( hours * 60 ) + minutes ) * 60 * 1000;
+				return result;
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+<mx:DateFormatter id="dateFormatter" formatString="YYYY-M-DDTJJ:NN:SS"/>
+	</fx:Declarations>
+<mx:HBox>
+	
+<mx:VBox>
+	
+	<mx:HBox>
+	<mx:VBox>
+		<s:Label text="username"/>
+		<s:TextInput id="usernameInput" width="200"/>
+		<s:Label text="password"/>
+		<s:TextInput id="passwordInput" displayAsPassword="true" width="200"/>
+		<s:Button label="Login!" click="init()"/>
+	</mx:VBox>
+	
+	<mx:VBox width="200" height="500">
+		<s:Label text="{displayName}"/>
+		<mx:Spacer/>
+		<s:Label text="{karma}"/>
+		<mx:Spacer/>
+		<s:Label text="{this.timeZone}"/>
+	</mx:VBox>
+		<mx:VBox>
+			
+			<flexlib:Timeline 
+				id="timeline" 
+				width="{scheduleViewerWidth}" borderStyle="none"  
+				startDate="{startDate}" endDate="{ endDate}" 
+				zoom="{zoom}" 
+				scroll="onScrollTimeline( event.position );" 
+				/>
+			
+			<flexlib:ScheduleViewer 
+				id="scheduleViewer"  
+				width="{scheduleViewerWidth}" height="400" borderStyle="none"
+				dataProvider="{this.entryData}"    
+				startDate="{startDate}" endDate="{endDate}" 
+				zoom="{zoom}" 
+				horizontalScrollPolicy="off" 
+				entryRenderer="flexlib.scheduling.scheduleClasses.renderers.ColoredSolidScheduleEntryRenderer" 
+				pixelScroll="onScrollScheduleViewer( event );" 
+				/>
+			
+			<mx:HBox width="{ scheduleViewerWidth }" paddingTop="6">      
+				<mx:Label text="Goto:"/>
+				<mx:Button label="Now" click="gotoNow();"/>
+				<mx:Button label="Selected" click="gotoSelectedEntry();"/>
+				<mx:Spacer width="100%"/>
+				<mx:Label text="Zoom:"/>
+				<mx:HSlider 
+					id="zoomSlider" 
+					minimum="0" maximum="1000" value="100"  
+					snapInterval="1" liveDragging="true" 
+					change="onZoom( zoomSlider.value );"  />
+			</mx:HBox>   
+		</mx:VBox>
+	</mx:HBox>
+	<mx:AdvancedDataGrid dataProvider="{this.microData}" id="plurkData" width="1500" height="500"/>
+</mx:VBox>
+		
+</mx:HBox>
+</s:Application>
