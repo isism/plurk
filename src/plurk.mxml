@@ -2,10 +2,11 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	       xmlns:s="library://ns.adobe.com/flex/spark" 
 	       xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
-	       xmlns:flexlib="flexlib.scheduling.*"  creationComplete="onCreationComplete();">
+	       xmlns:flexlib="flexlib.scheduling.*"  creationComplete="onCreationComplete();" xmlns:comp="comp.*">
 	<fx:Script>
 		<![CDATA[
 			import com.plurkbridge.PlurkBridge;
+			import comp.PlurkBase;
 			
 			import flashx.textLayout.conversion.TextConverter;
 			import flashx.textLayout.elements.TextFlow;
@@ -24,7 +25,7 @@
 
 			
 			
-			private var API_KEY:String = "6yx2VCMDFrRIjRkHLlDbss45xQJJaGCn";			
+//			private var API_KEY:String = "6yx2VCMDFrRIjRkHLlDbss45xQJJaGCn";			
 			private var USERNAME:String;		
 			private var PASSWORD:String;			
 			private var METHOD:String = "/API/Users/login";
@@ -33,16 +34,16 @@
 			private var getPlurk:String = "/API/Timeline/getPlurk";
 			private var Polling:String = "/API/Polling/getPlurks";
 			private var bridge:PlurkBridge = new PlurkBridge();
-			[Bindable]
-			private var karma:String;
-			[Bindable]
-			private var displayName:String;
-			[Bindable]
-			private var fullName:String;
-			[Bindable]
-			private var timeZone:String;
-			[Bindable]
-			private var avatar_url:String;
+//			[Bindable]
+//			private var karma:String;
+//			[Bindable]
+//			private var displayName:String;
+//			[Bindable]
+//			private var fullName:String;
+//			[Bindable]
+//			private var timeZone:String;
+//			[Bindable]
+//			private var avatar_url:String;
 			[Bindable]
 			private var avatar_profile:TextFlow;
 //			[Bindable]
@@ -67,58 +68,60 @@
 			private var ob_PlurksAPI:Object;
 			
 			
-			private function APIMethod(method:String,APIsFunction:Function,callBackFunction:Function):void{
-				this.bridge.load(method,APIs,callBackFunction);
-			}
+//			private function APIMethod(method:String,APIsFunction:Function,callBackFunction:Function):void{
+//				this.bridge.load(method,APIsF,callBackFunction);
+//			}
 			
-			private function init():void {
-				this.USERNAME = this.usernameInput.text;
-				this.PASSWORD = this.passwordInput.text;
-				bridge.load(METHOD,{api_key:API_KEY, username:USERNAME, password:PASSWORD},onComplete);
-			}
+//			private function init():void {
+//				this.USERNAME = this.usernameInput.text;
+//				this.PASSWORD = this.passwordInput.text;
+//				bridge.load(METHOD,{api_key:API_KEY, username:USERNAME, password:PASSWORD},onComplete);
+//				PlurkBase.load(METHOD,{username:USERNAME, password:PASSWORD},onComplete);
+//			}
 			
 			
-			private function onComplete(result:Object):void
-			{
-				if(result.error_text)
-				{
-					//Error handler
-					trace(result.error_text);
-					Alert.show(result.error_text);
-				}
-				else
-				{
-					//Success
-					//					trace(result.user_info.display_name);
-					Alert.show("Hello " + result.user_info.full_name);
-					var userInfo:Object = result.user_info;
-					this.displayName = userInfo.display_name;
-					this.fullName = userInfo.full_name;
-					this.karma = userInfo.karma;
-					this.timeZone = userInfo.timezone;
-					 /* Hi I am in your computer writing your programs! */
-					if(userInfo.has_profile_image == 1 && userInfo.avatar == (null || 0) ){
-						avatar_url = "http://avatars.plurk.com/"+userInfo.id+"-medium.gif";
-					}
-					else if(userInfo.has_profile_image == 1 && userInfo.avatar != (null&&0)){
-						avatar_url = "http://avatars.plurk.com/" + userInfo.id + "-medium" + userInfo.avatar +".gif";
-					}
-					else if(userInfo.has_profile_image == 0){
-						avatar_url = "http://www.plurk.com/static/default_medium.gif";
-					}
-					//					this.microData = result.plurks;
-//					Alert.show(avatar_url, result.user_info.id);
-//					var now:Date = new Date();
-//					this.hr24Ago = this.dateFormatter.format(new Date(now.getTime()-DateUtil.DAY_IN_MILLISECONDS*1).toUTCString());
-//					var nowUTC:String = this.dateFormatter.format(now.toUTCString());
-					Alert.show(this.hr24Ago.toString(),nowUTC);
-					this.APIMethod(getPlurks,ob_PlurksAPI,getPlurksComplete);
-//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:nowUTC,limit:100},getPlurksComplete);
-//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:this.hr24Ago},getPlurksComplete);
-					//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
-					
-				}
-			}
+//			private function onComplete(result:Object):void
+//			{
+//				if(result.error_text)
+//				{
+//					//Error handler
+//					trace(result.error_text);
+//					Alert.show(result.error_text);
+//				}
+//				else
+//				{
+//					//Success
+//					//					trace(result.user_info.display_name);
+//					Alert.show("Hello " + result.user_info.full_name);
+//					var userInfo:Object = result.user_info;
+//					this.displayName = userInfo.display_name;
+//					this.fullName = userInfo.full_name;
+//					this.karma = userInfo.karma;
+//					this.timeZone = userInfo.timezone;
+//					 /* Hi I am in your computer writing your programs! */
+//					if(userInfo.has_profile_image == 1 && userInfo.avatar == (null || 0) ){
+//						avatar_url = "http://avatars.plurk.com/"+userInfo.id+"-medium.gif";
+//					}
+//					else if(userInfo.has_profile_image == 1 && userInfo.avatar != (null&&0)){
+//						avatar_url = "http://avatars.plurk.com/" + userInfo.id + "-medium" + userInfo.avatar +".gif";
+//					}
+//					else if(userInfo.has_profile_image == 0){
+//						avatar_url = "http://www.plurk.com/static/default_medium.gif";
+//					}
+//					//					this.microData = result.plurks;
+////					Alert.show(avatar_url, result.user_info.id);
+////					var now:Date = new Date();
+////					this.hr24Ago = this.dateFormatter.format(new Date(now.getTime()-DateUtil.DAY_IN_MILLISECONDS*1).toUTCString());
+////					var nowUTC:String = this.dateFormatter.format(now.toUTCString());
+//					Alert.show(this.hr24Ago.toString(),nowUTC);
+////					this.APIMethod(getPlurks,ob_PlurksAPI,getPlurksComplete);
+//					PlurkBase.load(this.getPlurks,{offset:nowUTC,limit:100},getPlurksComplete);
+////					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:nowUTC,limit:100},getPlurksComplete);
+////					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:this.hr24Ago},getPlurksComplete);
+//					//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+//					
+//				}
+//			}
 			private function getPlurksComplete(result:Object):void
 			{
 				if(result.error_text)
@@ -195,7 +198,8 @@
 						addEntryData.addItem(entry);
 					}
 					this.entryData = addEntryData;
-					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+					PlurkBase.load(this.NotificationURL,{},getNotification);
+//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
 					
 				}
 			}
@@ -299,8 +303,9 @@
 			private function gotoNow() : void
 			{
 				var time : Date = new Date();
+				PlurkBase.load(this.getPlurks,{},getPlurksComplete);
 //				this.bridge.load(this.getPlurks,{api_key:this.API_KEY},getPlurksComplete);
-				this.APIMethod(this.getPlurks,this.ob_PlurksAPI,getPlurksComplete);
+//				this.APIMethod(this.getPlurks,this.ob_PlurksAPI,getPlurksComplete);
 				scheduleViewer.moveToTime( time.getTime() - startDate.getTime() );
 			}
 			
@@ -377,24 +382,25 @@
 		<mx:VBox>
 			
 			<mx:HBox>
-				<mx:VBox>
+				<!--<mx:VBox>
 					<s:Label text="username"/>
 					<s:TextInput id="usernameInput" width="200"/>
 					<s:Label text="password"/>
 					<s:TextInput id="passwordInput" displayAsPassword="true" width="200"/>
 					<s:Button label="Login!" click="init()"/>
-				</mx:VBox>
+				</mx:VBox>-->
+				<comp:basicInfo/>
 				
-				<mx:VBox width="200" height="500">
+<!--				<mx:VBox width="200" height="500">
 					<mx:Image source="{avatar_url}"/>
-					<!--<s:RichEditableText editable="false" textFlow="{avatar_profile}"/>-->
+					<s:RichEditableText editable="false" textFlow="{avatar_profile}"/>
 					<mx:Spacer/>
 					<s:Label text="{displayName}"/>
 					<mx:Spacer/>
 					<s:Label text="{karma}"/>
 					<mx:Spacer/>
 					<s:Label text="{this.timeZone}"/>
-				</mx:VBox>
+				</mx:VBox>-->
 				<mx:VBox>
 					
 					<flexlib:Timeline 
