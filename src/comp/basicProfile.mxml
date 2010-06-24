@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	 xmlns:s="library://ns.adobe.com/flex/spark" 
+	 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			[Bindable]
+			private var karma:String;
+			[Bindable]
+			private var displayName:String;
+			[Bindable]
+			private var fullName:String;
+			[Bindable]
+			private var timeZone:String;
+			[Bindable]
+			private var avatar_url:String;
+			
+			
+			public function onComplete(result:Object):void
+			{
+				if(result.error_text)
+				{
+					//Error handler
+					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+					//					trace(result.user_info.display_name);
+					Alert.show("Hello " + result.user_info.full_name);
+					var userInfo:Object = result.user_info;
+					this.displayName = userInfo.display_name;
+					this.fullName = userInfo.full_name;
+					this.karma = userInfo.karma;
+					this.timeZone = userInfo.timezone;
+					/* Hi I am in your computer writing your programs! */
+					if(userInfo.has_profile_image == 1 && userInfo.avatar == (null || 0) ){
+						avatar_url = "http://avatars.plurk.com/"+userInfo.id+"-medium.gif";
+					}
+					else if(userInfo.has_profile_image == 1 && userInfo.avatar != (null&&0)){
+						avatar_url = "http://avatars.plurk.com/" + userInfo.id + "-medium" + userInfo.avatar +".gif";
+					}
+					else if(userInfo.has_profile_image == 0){
+						avatar_url = "http://www.plurk.com/static/default_medium.gif";
+					}
+					//					this.microData = result.plurks;
+					//					Alert.show(avatar_url, result.user_info.id);
+					//					var now:Date = new Date();
+					//					this.hr24Ago = this.dateFormatter.format(new Date(now.getTime()-DateUtil.DAY_IN_MILLISECONDS*1).toUTCString());
+					//					var nowUTC:String = this.dateFormatter.format(now.toUTCString());
+					//								Alert.show(this.hr24Ago.toString(),nowUTC);
+					//					this.APIMethod(getPlurks,ob_PlurksAPI,getPlurksComplete);
+					//								PlurkBase.load(this.getPlurks,{offset:nowUTC,limit:100},getPlurksComplete);
+					//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:nowUTC,limit:100},getPlurksComplete);
+					//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:this.hr24Ago},getPlurksComplete);
+					//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
+					
+				}
+			}
+
+		]]>
+	</fx:Script>
+	<mx:VBox width="200" height="500">
+		<mx:Image source="{avatar_url}"/>
+		<!--<s:RichEditableText editable="false" textFlow="{avatar_profile}"/>-->
+		<mx:Spacer/>
+		<s:Label text="{displayName}"/>
+		<mx:Spacer/>
+		<s:Label text="{karma}"/>
+		<mx:Spacer/>
+		<s:Label text="{this.timeZone}"/>
+	</mx:VBox>
+</s:Panel>

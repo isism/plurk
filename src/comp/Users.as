@@ -1,6 +1,6 @@
 package comp
 {
-	import com.plurkbridge.PlurkBridge;
+//	import com.plurkbridge.PlurkBridge;
 	
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
@@ -26,6 +26,15 @@ package comp
 		public static function doLogout(callback:Function):void {
 			PlurkBase.load(logout,{}, callback);
 		}
+		public static function doUpdate(callback:Function):void {
+			PlurkBase.load(update,{ password: password }, callback);
+		}
+		public static function doUpdatePicture(callback:Function):void {
+			PlurkBase.load(updatePicture,{}, callback);
+		}
+		public static function doRegister(callback:Function):void {
+			PlurkBase.load(register,{}, callback);
+		}
 		
 
 		//		Users
@@ -34,28 +43,6 @@ package comp
 //			/API/Users/logout
 //			/API/Users/update
 //			/API/Users/updatePicture
-//		public function Users(target:IEventDispatcher=null)
-//		public function Users(Method:String,parameters:Object):void
-//		{	
-//			switch(Method)
-//			{
-//				case register:
-//				{
-////				_userBridge.load(this.register,parameters,
-//				}
-//			}
-//			//TODO: implement function
-//			super(target);
-//		}
-//		public function UserParameters(method:String):Object {
-//			var 
-//			switch (method)
-//			{
-//				case register:
-//				{
-//					
-//				}
-//			}
-//		}
+
 	}
 }

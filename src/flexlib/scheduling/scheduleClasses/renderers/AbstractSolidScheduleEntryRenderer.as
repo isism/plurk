@@ -223,7 +223,6 @@ package flexlib.scheduling.scheduleClasses.renderers
 	tlformet.fontSize = 14;
 	tlformet.kerning = flash.text.engine.Kerning.AUTO ;
 	tlformet.ligatureLevel = flash.text.engine.LigatureLevel.EXOTIC;
-	tlformet.lineBreak = flash.text.engine.LineJustification.ALL_BUT_LAST;
 	
 //      toolTip = time + "\n" + "isisSolid" + content.label;
       contentLabel.text = time;
