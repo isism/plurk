@@ -44,7 +44,6 @@ package flexlib.scheduling.scheduleClasses.renderers
   import mx.containers.HBox;
   import mx.controls.Alert;
   import mx.controls.Image;
-  import mx.controls.Label;
   import mx.controls.Text;
   import mx.core.ScrollPolicy;
   import mx.core.mx_internal;
@@ -52,14 +51,24 @@ package flexlib.scheduling.scheduleClasses.renderers
   import mx.styles.CSSStyleDeclaration;
   import mx.styles.StyleManager;
   
+  import spark.components.BorderContainer;
+  import spark.components.Label;
   import spark.components.RichEditableText;
+  
+  import uiDispaly.verbContainer;
 
   public class AbstractSolidScheduleEntryRenderer extends Box implements IScheduleEntryRenderer
   {
     public var contentLabel:Label;
+    public var contentQualifier:Label;
+    public var verbGroup:verbContainer;
+    public var verbBox:HBox;
     public var contentUserImage:Image;
     public var contentText:RichEditableText;
     public var contentHBox:HBox;
+    
+    public var entryWidth:int;
+    
 //    public var contentText:Text;
 
     private var defaultLabel:String = "<br/>";
@@ -145,7 +154,7 @@ package flexlib.scheduling.scheduleClasses.renderers
         {
           this.fontWeight = "bold";
           this.color = 0x000000;
-          this.fontSize = 9;
+          this.fontSize = 12;
         };
       }
       // defaultEntryStyle
@@ -164,7 +173,7 @@ package flexlib.scheduling.scheduleClasses.renderers
           this.paddingTop = 5;
           this.color = 0x000000;
           this.backgroundColor = 0xcccccc;
-          this.fontSize = 11;
+          this.fontSize = 16;
           this.verticalGap = -2;
           this.paddingBottom = 5;
           this.paddingLeft = 5;
@@ -178,7 +187,22 @@ package flexlib.scheduling.scheduleClasses.renderers
     {
       super.createChildren();
       contentLabel = new Label();
-      addChild(contentLabel);
+      contentQualifier = new Label();
+      verbGroup = new verbContainer();
+//      verbGroup.verb = this.contentQualifier.text;
+     
+      verbBox = new HBox();
+      verbBox.height = 20;
+//      verbBox.setStyle("borderStyle","solid");
+//      verbGroup = new BorderContainer();
+//      verbGroup.height = 10;
+//      verbGroup.setStyle("borderColor",0xff0000);
+//      verbGroup.layout
+      verbBox.addChild(contentLabel);
+      addChild(verbBox);
+//      verbGroup.addElement(contentLabel);
+//      verbGroup.addElement(contentQualifier);
+      
 	contentUserImage = new Image();
       contentText = new RichEditableText();
       contentHBox = new HBox();
@@ -213,7 +237,7 @@ package flexlib.scheduling.scheduleClasses.renderers
 //      if (!content.label)
       if (content.label == null)
 //        content.label.text = defaultLabel;
-		contentText.text = defaultLabel;
+      		contentText.text = defaultLabel;
 	      //        content.label = defaultLabel;
 
       formatter.error = "";
@@ -225,7 +249,19 @@ package flexlib.scheduling.scheduleClasses.renderers
 	tlformet.ligatureLevel = flash.text.engine.LigatureLevel.EXOTIC;
 	
 //      toolTip = time + "\n" + "isisSolid" + content.label;
-      contentLabel.text = time;
+      contentLabel.text = content.username;
+      
+//      if (content.qualifier && contentQualifier.text == '') {
+      if (content.qualifier) {
+      contentQualifier.text = content.qualifier;
+//      this.verbGroup = new verbContainer();
+      this.verbGroup.verb = this.contentQualifier.text;
+      this.verbGroup.addElement(contentQualifier);
+      this.verbBox.addChild(verbGroup);
+      // use measureText()
+      this.verbGroup.width = contentQualifier.measureText(content.qualifier).width + 10;
+      }
+//      contentLabel.text = time;
       contentLabel.styleName = getStyle("timeStyleName");
       this.contentUserImage.source = content.ownerImgUrl;
       this.contentText.editable = false;
@@ -233,6 +269,14 @@ package flexlib.scheduling.scheduleClasses.renderers
       contentText.textFlow.format = tlformet;
       toolTip = time + "\n" + contentText.text;
 //      contentText.text = content.label;
+//      this._entry._width = this.contentHBox.measureHTMLText(content.label).width + this.contentUserImage.width + 65;
+//      this.entryWidth = this.contentHBox.measureHTMLText(content.label).width;
+//      this.dispatchPropertyChangeEvent("width", this.width, this.entryWidth);
+//      Alert.show(this.width.toString());
+//      this.parent.width = this.width;
+//	this.validateNow();
+	//      this.width = content.width;
+//      this.setStyle("backgroundColor",0x3399cc);
 
       updateSelected();
     }

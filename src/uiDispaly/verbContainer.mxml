@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" height="5" borderVisible="false" backgroundColor="{colorOf(verb)}">
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			public var verb:String;
+			
+			public function colorOf(verb:String):int {
+				var verb:String;
+				var bgColor:int;
+				switch(verb){
+					case "loves":
+						bgColor = 0xB20C0C;
+						break;
+					case "likes":
+						bgColor = 0xCB2728 ;
+						break;
+					case "shares":
+						bgColor =0xA74949 ;
+						break;
+					case "gives":
+						bgColor = 0x620E0E;
+						break;
+					case "hates":
+						bgColor = 0x111111;
+						break;
+					case "wants":
+						bgColor = 0x8DB241;
+						break;
+					case "has":
+						bgColor = 0x777777;
+						break;
+					case "will":
+						bgColor = 0xB46DB9;
+						break;
+					case "asks":
+						bgColor = 0x8361BC;
+						break;
+					case "wishes":
+						bgColor = 0x5BB017;
+						break;
+					case "was":
+						bgColor = 0x525252;
+						break;
+					case "feels":
+						bgColor = 0x2D83BE;
+						break;
+					case "thinks":
+						bgColor = 0x689CC1;
+						break;
+					case "says":
+						bgColor = 0xE2560B;
+						break;
+					case "is":
+						bgColor = 0xE57C43;
+						break;
+//					case ":":
+//						bgColor = ;
+//						break;
+					case "freestyle":
+						bgColor = 0x000000;
+						break;
+					case "hopes":
+						bgColor = 0xE05BE9;
+						break;
+					case "needs":
+						bgColor = 0x7A9A37;
+						break;
+					case "wonders":
+						bgColor = 0x2E4E9E;
+						break;
+					default:
+						bgColor = 0xFFFFFF;
+						break;
+				}
+				return bgColor;
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+</s:BorderContainer>

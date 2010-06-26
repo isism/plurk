@@ -38,5 +38,7 @@ POSSIBILITY OF SUCH DAMAGE.
 		function set startDate( value : Date ) : void;
 		function get endDate() : Date;
 		function set endDate ( value : Date ) : void;
+//		function get _width() : Number;
+//		function set _width ( value : Number ) : void;
 	}
 }

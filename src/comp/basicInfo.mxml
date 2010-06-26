@@ -25,6 +25,6 @@
 	<s:TextInput id="usernameInput" width="200" text="@{Users.username}" />
 	<s:Label text="password"/>
 	<s:TextInput id="passwordInput" displayAsPassword="true" width="200" text="@{Users.password}"/>
-	<s:Button label="Login!" click="init()"/>
+	<s:Button label="Login!" click="init();"/>
 	
 </s:Panel>

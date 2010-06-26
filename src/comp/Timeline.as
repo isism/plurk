@@ -40,12 +40,12 @@ package comp
 		public static function doGetPlurk(plurk_id:Number,callback:Function):void {
 			PlurkBase.load(getPlurk,{plurk_id: plurk_id},callback);
 		}
-		public static function doGetPlurks(callback:Function, offset = null, limit = null, filter = null):void {
+		public static function doGetPlurks(callback:Function, offset:Date = null, limit:String = null, filter:String = null):void {
 //			var params:Object = {};
 //			if (filter) { params.filter = filter }
 			PlurkBase.load(getPlurks, {offset: offset, limit: limit, filter: filter}, callback);
 		}
-		public static function doGetUnreadPlurks(callback:Function, offset= null, limit = null):void {
+		public static function doGetUnreadPlurks(callback:Function, offset:Date= null, limit:String = null):void {
 			PlurkBase.load(getUnreadPlurks,{offset: offset, limit: limit},callback);
 		}
 		
@@ -69,7 +69,7 @@ package comp
 		 * 
 		 * @see someOtherMethod 
 		 */ 
-		public static function doPlurkAdd(content:String, qualifier:String, callback:Function, limited_to:Array=null, no_comments=null, lang = null):void {
+		public static function doPlurkAdd(content:String, qualifier:String, callback:Function, limited_to:Array=null, no_comments:String=null, lang:String = null):void {
 			PlurkBase.load(plurkAdd,{content: content, qualifier: qualifier, limited_to: limited_to,no_comments: no_comments, lang: lang},callback);
 		}
 		public static function doPlurkDelete(plurk_id:Number, callback:Function):void {

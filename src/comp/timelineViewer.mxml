@@ -45,9 +45,11 @@
 			[Bindable]
 			private var now:Date = new Date();
 			[Bindable]
-			private var hr24Ago :String 
+			private var hr24Ago :String ;
 			[Bindable]
-			private var nowUTC:String
+			private var nowUTC:String;
+			
+//			private var widthBox:BorderContainer = new BorderContainer();
 			
 			
 			private function onCreationComplete() : void
@@ -55,6 +57,7 @@
 				setTimeframe();
 				//				initDataProvider();
 				initBackgroundColors();
+				this.zoom = zoomSlider.value;
 			}
 			
 			private function setTimeframe() : void
@@ -90,7 +93,7 @@
 			private function gotoNow() : void
 			{
 				var time : Date = new Date();
-				comp.Timeline.doGetPlurks(getPlurksComplete);
+				comp.Timeline.doGetPlurks(getPlurksComplete,null,"50");
 //				PlurkBase.load(this.getPlurks,{},getPlurksComplete);
 				//				this.bridge.load(this.getPlurks,{api_key:this.API_KEY},getPlurksComplete);
 				//				this.APIMethod(this.getPlurks,this.ob_PlurksAPI,getPlurksComplete);
@@ -186,7 +189,9 @@
 						//						Alert.show(now.toUTCString(),this.TimeOffSet.toString());
 						entry.startDate = new Date(postedDate.getTime() - DateUtil.MINUTE_IN_MILLISECONDS*this.TimeOffSet);
 						//						entry.startDate = DateUtil.clearTime(new Date());
-						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.MINUTE_IN_MILLISECONDS*20 );
+						var widthSecond:int = (this.btnNow.measureHTMLText(i.content).width)/15;
+						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.MINUTE_IN_MILLISECONDS*(widthSecond +10));
+//						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.MINUTE_IN_MILLISECONDS*20 );
 						//						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.HOUR_IN_MILLISECONDS*24 );
 						var j:Number = i.owner_id;
 						var z:String = j.toString();
@@ -206,6 +211,8 @@
 							//									entry.ownerImgUrl = "http://www.plurk.com/static/default_small.gif";
 						}
 						
+						entry.qualifier = i.qualifier;
+						entry.username = userProfile.nick_name;
 						entry.label= i.content;
 						//						entry.label =TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
 						//						Alert.show(TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT) as String);
@@ -226,7 +233,9 @@
 								//grey
 								break;
 						}
+//						entry.width = this.btnNow.measureHTMLText(i.content).width + 50;
 						entry.backgroundColor = entryBGcolor;
+
 						//						this.bridge.load(this.getPlurk,{api_key:this.API_KEY,plurk_id:m},getPlurkComplete);
 						//						entry.ownerImgUrl = this.user_avatar_url;
 						addEntryData.addItem(entry);
@@ -259,7 +268,7 @@
 			width="{scheduleViewerWidth}" height="400" borderStyle="none"
 			dataProvider="{this.entryData}"    
 			startDate="{startDate}" endDate="{endDate}" 
-			zoom="{zoom}" 
+			zoom="@{zoom}" 
 			horizontalScrollPolicy="off" 
 			entryRenderer="flexlib.scheduling.scheduleClasses.renderers.ColoredSolidScheduleEntryRenderer" 
 			pixelScroll="onScrollScheduleViewer( event );" 
@@ -267,7 +276,7 @@
 		
 		<mx:HBox width="{ scheduleViewerWidth }" paddingTop="6">      
 			<mx:Label text="Goto:"/>
-			<mx:Button label="Now" click="gotoNow();"/>
+			<mx:Button id="btnNow" label="Now" click="gotoNow();"/>
 			<mx:Button label="Selected" click="gotoSelectedEntry();"/>
 			<mx:Spacer width="100%"/>
 			<mx:Label text="Zoom:"/>

@@ -304,6 +304,7 @@ package flexlib.scheduling
       content = new UIComponent();
       schedule.content = content;
       addChild(content);
+//      scheduleViewer  mask;
       content.mask = maskShape;
 
       schedule.initializeCompileTimeViewLayers();

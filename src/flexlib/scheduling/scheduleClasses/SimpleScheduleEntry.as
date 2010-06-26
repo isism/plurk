@@ -31,6 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 */package flexlib.scheduling.scheduleClasses
 {	
 	import flexlib.scheduling.scheduleClasses.IScheduleEntry;
+	
+	import mx.charts.chartClasses.NumericAxis;
 
 	/**
 	 */	
@@ -38,7 +40,12 @@ POSSIBILITY OF SUCH DAMAGE.
 	{
 		public var label : String;
 //		public var label:RichEditableText;
+		public var username:String;
+		public var qualifier_translated:String;
+		public var qualifier:String;
 		public var ownerImgUrl:String;
+//		public var width:int;
+//		private var __width:Number = 250;
 		private var _startDate : Date;
 		private var _endDate : Date;	
 	
@@ -61,7 +68,17 @@ POSSIBILITY OF SUCH DAMAGE.
 		{
 			_endDate = value;
 		}
-				
+
+//		public function get _width() : Number
+//		{
+//			return __width;
+//		}
+//		
+//		public function set _width( value :Number ) : void 
+//		{
+//			__width = value;
+//		}
+
 		public function toString() : String
 		{
 			return "[object SimpleScheduleEntry startDate:" + startDate + " endDate:" + endDate + "]";

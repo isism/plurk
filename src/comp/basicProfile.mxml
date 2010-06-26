@@ -8,6 +8,7 @@
 	<fx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
+
 			[Bindable]
 			private var karma:String;
 			[Bindable]
@@ -59,7 +60,8 @@
 					//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:nowUTC,limit:100},getPlurksComplete);
 					//					this.bridge.load(this.getPlurks,{api_key:this.API_KEY,offset:this.hr24Ago},getPlurksComplete);
 					//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
-					
+						this.parentApplication.currentState = 'basicInformation';
+//						complete();
 				}
 			}
 

@@ -30,23 +30,25 @@ POSSIBILITY OF SUCH DAMAGE.
 @ignore
 */package flexlib.scheduling.scheduleClasses.viewers
 {
-	import flexlib.scheduling.scheduleClasses.IScheduleEntry;
-	import flexlib.scheduling.scheduleClasses.layout.EntryLayoutItem;
-	import flexlib.scheduling.scheduleClasses.layout.IEntryLayout;
-	import flexlib.scheduling.scheduleClasses.layout.LayoutUpdateEvent;
-	import flexlib.scheduling.scheduleClasses.renderers.GradientScheduleEntryRenderer;
-	import flexlib.scheduling.scheduleClasses.renderers.IScheduleEntryRenderer;
-	import flexlib.scheduling.scheduleClasses.utils.Selection;
-	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.utils.Dictionary;
 	
+	import flexlib.scheduling.scheduleClasses.IScheduleEntry;
+	import flexlib.scheduling.scheduleClasses.layout.EntryLayoutItem;
+	import flexlib.scheduling.scheduleClasses.layout.IEntryLayout;
+	import flexlib.scheduling.scheduleClasses.layout.LayoutUpdateEvent;
+	import flexlib.scheduling.scheduleClasses.renderers.AbstractSolidScheduleEntryRenderer;
+	import flexlib.scheduling.scheduleClasses.renderers.GradientScheduleEntryRenderer;
+	import flexlib.scheduling.scheduleClasses.renderers.IScheduleEntryRenderer;
+	import flexlib.scheduling.scheduleClasses.utils.Selection;
+	
 	import mx.core.ClassFactory;
 	import mx.core.IFactory;
 	import mx.core.UIComponent;
+	import mx.events.PropertyChangeEvent;
 	
 	/**
 	 *  Name of CSS style declaration that specifies styles for the schedule entries
@@ -59,6 +61,8 @@ POSSIBILITY OF SUCH DAMAGE.
 	public class EntryViewer extends UIComponent 
 	{
 		public var entryRenderer : IFactory;
+		
+		private var newWidth:int;
 		private var freeRenderers : Array;
 		private var visibleRenderers : Dictionary;
 		private var layout : IEntryLayout;		
@@ -68,13 +72,15 @@ POSSIBILITY OF SUCH DAMAGE.
 		
 		public function EntryViewer()
 		{
-			entryRenderer = new ClassFactory( GradientScheduleEntryRenderer );
+			entryRenderer = new ClassFactory( AbstractSolidScheduleEntryRenderer);
+//			entryRenderer = new ClassFactory( GradientScheduleEntryRenderer );
 			
 			freeRenderers = new Array();
 			visibleRenderers = new Dictionary();	
 			
 			selection = new Selection();
 			
+			addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, doWidthChange);
 			addEventListener( MouseEvent.MOUSE_UP, onClickEntry );
 			addEventListener( Event.ACTIVATE, addKeyListeners );
 			addEventListener( Event.DEACTIVATE, removeKeyListeners );
@@ -239,6 +245,7 @@ POSSIBILITY OF SUCH DAMAGE.
 			{
 				if( target is IScheduleEntryRenderer ) return target as IScheduleEntryRenderer;
 				target = target.parent;
+				
 			}
 			return null;
 		}
@@ -250,6 +257,14 @@ POSSIBILITY OF SUCH DAMAGE.
 				renderer.selected = selection.hasItem( renderer.data );
 			}
 		}
+		//
+		private function doWidthChange(e:PropertyChangeEvent):void {
+			if(e.property == "width"){
+				this.newWidth = Number(e.newValue);
+			}
+		}
+		
+		
 		
 		private function render( layout : IEntryLayout ) : void 
 		{
@@ -260,12 +275,15 @@ POSSIBILITY OF SUCH DAMAGE.
 			
 			for each( var item : EntryLayoutItem in layout.items )
 			{
+//				var renderer :AbstractSolidScheduleEntryRenderer = oldRenderers[ item ];
 				var renderer : IScheduleEntryRenderer = oldRenderers[ item ];
 				if( renderer != null )
 				{
 					renderer.x = item.x / item.zoom - layout.xPosition;
 					renderer.y = item.y - layout.yPosition + 2;
-					renderer.width = item.width / item.zoom;
+//					renderer.width = item.width / item.zoom;
+					renderer.width = Math.min(item.width/item.zoom, 250);
+//					renderer.width = Math.min(item.data._width, 250);
 					renderer.height = item.height - 4;
 					delete oldRenderers[ item ];
 				}
@@ -276,7 +294,10 @@ POSSIBILITY OF SUCH DAMAGE.
 					if( style != null ) renderer.styleName = style;
 					renderer.x = item.x / item.zoom - layout.xPosition;
 					renderer.y = item.y - layout.yPosition + 2;
-					renderer.width = item.width / item.zoom;
+//					renderer.width = 25;
+//					renderer.width = item.width / item.zoom;
+					renderer.width = Math.min(item.width/item.zoom, 250);
+//					renderer.width = Math.min(item.data._width, 250);
 					renderer.height = item.height - 4;
 					
 					addChild( DisplayObject( renderer ) );
