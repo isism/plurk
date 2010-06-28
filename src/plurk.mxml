@@ -2,12 +2,14 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	       xmlns:s="library://ns.adobe.com/flex/spark" 
 	       xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
-	       xmlns:comp="comp.*">
+	       xmlns:comp="comp.*" xmlns:events="events.*">
 	
 	<fx:Script>
 		<![CDATA[
 //			import com.plurkbridge.PlurkBridge;
 			import comp.PlurkBase;
+			
+			import events.AddNewPlurk;
 			
 			import flashx.textLayout.conversion.TextConverter;
 			import flashx.textLayout.elements.TextFlow;
@@ -45,7 +47,10 @@
 				this.currentState = 'basicInformation';
 				Profile.onComplete(result);
 			}
-
+			
+			private function addNewPlurkEventHandler(e:AddNewPlurk):void {
+				this.timelineViewer.gotoNow();
+			}
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -66,7 +71,9 @@
 
 				<comp:basicInfo width="300" complete="{signinComplete}" includeIn="signin"/>
 				<comp:basicProfile width="100" id="Profile" includeIn="basicInformation" />
-				<comp:timelineViewer includeIn="basicInformation"/>
+				<comp:timelineViewer id="timelineViewer"   includeIn="basicInformation"/>
+				<comp:addPlurkEditor addPlurk="addNewPlurkEventHandler(event)"  includeIn="basicInformation"/>
+				
 
 			</mx:HBox>
 			<!--<mx:AdvancedDataGrid dataProvider="{this.microData}" id="plurkData" width="1500" height="500"/>-->

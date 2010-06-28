@@ -10,15 +10,17 @@
 			import mx.controls.Alert;
 
 			[Bindable]
-			private var karma:String;
+			internal static var karma:String;
 			[Bindable]
-			private var displayName:String;
+			internal static var displayName:String;
 			[Bindable]
-			private var fullName:String;
+			internal static var fullName:String;
 			[Bindable]
 			private var timeZone:String;
 			[Bindable]
 			private var avatar_url:String;
+			[Bindable]
+			internal static var recuited:String;
 			
 			
 			public function onComplete(result:Object):void
@@ -35,9 +37,10 @@
 					//					trace(result.user_info.display_name);
 					Alert.show("Hello " + result.user_info.full_name);
 					var userInfo:Object = result.user_info;
-					this.displayName = userInfo.display_name;
-					this.fullName = userInfo.full_name;
-					this.karma = userInfo.karma;
+					displayName = userInfo.display_name;
+					fullName = userInfo.full_name;
+					karma = userInfo.karma;
+					recuited = userInfo.recuited;
 					this.timeZone = userInfo.timezone;
 					/* Hi I am in your computer writing your programs! */
 					if(userInfo.has_profile_image == 1 && userInfo.avatar == (null || 0) ){

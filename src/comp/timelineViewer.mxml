@@ -23,6 +23,8 @@
 			import mx.events.ScrollEventDirection;
 			import mx.formatters.DateFormatter;
 			
+			import events.AddNewPlurk;
+			
 			[Bindable]
 			private var startDate : Date;
 			[Bindable]
@@ -90,7 +92,8 @@
 				}
 			} 
 			
-			private function gotoNow() : void
+			[Bindable(event="addPlurk")]
+			public function gotoNow() : void
 			{
 				var time : Date = new Date();
 				comp.Timeline.doGetPlurks(getPlurksComplete,null,"50");
@@ -212,7 +215,9 @@
 						}
 						
 						entry.qualifier = i.qualifier;
-						entry.username = userProfile.nick_name;
+						entry.nickName = userProfile.nick_name;
+						entry.dispalyName = userProfile.display_name;
+						entry.fullName = userProfile.full_name;
 						entry.label= i.content;
 						//						entry.label =TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
 						//						Alert.show(TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT) as String);

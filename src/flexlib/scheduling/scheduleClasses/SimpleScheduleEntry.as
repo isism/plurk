@@ -40,7 +40,9 @@ POSSIBILITY OF SUCH DAMAGE.
 	{
 		public var label : String;
 //		public var label:RichEditableText;
-		public var username:String;
+		public var nickName:String;
+		public var dispalyName: String;
+		public var fullName:String;
 		public var qualifier_translated:String;
 		public var qualifier:String;
 		public var ownerImgUrl:String;

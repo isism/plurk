@@ -7,7 +7,7 @@
 			[Bindable]
 			public var verb:String;
 			
-			public function colorOf(verb:String):int {
+			public static function colorOf(verb:String):int {
 				var verb:String;
 				var bgColor:int;
 				switch(verb){

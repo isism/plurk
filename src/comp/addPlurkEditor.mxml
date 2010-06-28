@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	 xmlns:s="library://ns.adobe.com/flex/spark" 
+	 xmlns:mx="library://ns.adobe.com/flex/mx"
+	 xmlns:uiDisplay="uiDisplay" width="700" height="200" xmlns:uiDispaly="uiDispaly.*" xmlns:comp="comp.*">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Metadata>
+		[Event(name="addPlurk",type="events.AddNewPlurk")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import comp.Timeline;
+			import comp.basicProfile;
+			
+			import events.AddNewPlurk;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import uiDisplay.verbContainer;
+			import uiDisplay.verbItem;
+			
+			
+			[Bindable]
+			private var verbProvider:ArrayCollection = new ArrayCollection([":","loves","likes","shares","gives","hates","wants","wishes","needs","will","hopes","asks","has","was","wonders","feels","thinks","says","is"]);
+			
+			private function addPlurkEditorHandler():void {
+				Timeline.doPlurkAdd(this.plurkContent.text,this.verb.selectedItem,plurkAddCompelete);
+			}
+			
+			private function plurkAddCompelete(result:Object):void {
+				// error handler
+				if (result.error_text) {
+					Alert.show(result.error_text);
+				}
+				else {
+				//success
+					Alert.show("New plurk added!");
+					var addNewPlurk:AddNewPlurk = new AddNewPlurk("addPlurk",true);
+					this.dispatchEvent(addNewPlurk);
+					this.plurkContent.text = "";
+				}
+			}
+			
+			private function verbListRollOverHandler(e:MouseEvent):void {
+				this.verb.openDropDown();
+//				this.verb.openDropDown();
+			}
+			
+//			private function verbListRollOutHandler(e:MouseEvent):void {
+//				e.target.closeDropDown(true);
+////				this.verb.closeDropDown(true);
+//			}
+
+			protected function smileys_changeHandler(e:IndexChangeEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.plurkContent.appendText(this.smileys.dataProvider.getItemAt(e.newIndex)[0].toString());
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:BorderContainer>
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>	
+	<s:Label text="{basicProfile.displayName}"/>
+	<s:DropDownList id="verb" width="80" prompt=":" chromeColor="{uiDisplay.verbContainer.colorOf(this.verb.selectedItem)}" dataProvider="{this.verbProvider}" click="verbListRollOverHandler(event)"
+			 itemRenderer="uiDisplay.verbItem" rollOver="verbListRollOverHandler(event)" 
+			 open="UIComponent(verb.dropDown).maxHeight = NaN">
+	<!--		 rollOut="verbListRollOutHandler(event)">-->
+		<s:layout>
+			<s:VerticalLayout horizontalAlign="center" requestedRowCount="{this.verbProvider.length}"/>
+		</s:layout>
+	</s:DropDownList>
+	<s:TextArea id="plurkContent" minHeight="100">
+		
+	</s:TextArea>
+	<comp:chooseEmoticons id="smileys" change="smileys_changeHandler(event)" />
+
+	<s:Button label="Plurk" click="addPlurkEditorHandler()"/>
+	</s:BorderContainer>
+</s:Panel>

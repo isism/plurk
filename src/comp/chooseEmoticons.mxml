@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:DropDownList xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx"
+		width="100" height="25" prompt=":)" dataProvider="{this.smileysDataProvider}"
+		 open="dropdownlistSmileys_openHandler(event)"
+		  labelFunction="smileyToLabel"
+		 itemRenderer="uiDisplay.smileysItem"
+		 rollOver="dropdownlistSmileys_rollOverHandler(event)"
+		  click="dropdownlistSmileys_rollOverHandler(event)"
+		 creationComplete="init()">
+	<s:layout>
+		<s:TileLayout requestedColumnCount="5" requestedRowCount="10" horizontalGap="0" horizontalAlign="center"/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import comp.Emoticons;
+			import comp.basicProfile;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			
+			import spark.events.DropDownEvent;
+			
+			import uiDisplay.smileysItem;
+			
+			private var karma:int = int(basicProfile.karma);
+			private var recuited:int = int(basicProfile.recuited);
+			
+			private var karmaData:Object;
+			private var recuitedData:Object;
+			private var smileys0:ArrayCollection;
+			private var smileys25:ArrayCollection;
+			private var smileys50:ArrayCollection;
+			private var smileys81:ArrayCollection;
+			private var smileys100:ArrayCollection;
+			private var smileysRecuited10:ArrayCollection;
+			[Bindable]
+			private var smileysDataProvider:ArrayCollection= new ArrayCollection();
+			
+			
+			private function init():void {
+				Emoticons.doGet(getSmileysCompelete);
+			}
+			
+			private function getSmileysCompelete(result:Object):void {
+				if (result.error_text) {
+					Alert.show(result.error_text);
+				}
+				else {
+					this.karma = int(basicProfile.karma);
+					this.recuited = int(basicProfile.recuited);
+					this.karmaData = result.karma;
+					this.recuitedData = result.recuited;
+					if(this.karma>= 0){
+					this.smileys0 = new ArrayCollection(this.karmaData[0]);
+//					this.smileysDataProvider = new ArrayCollection(
+//						this.smileysDataProvider.source.concat(this.smileys0.source)
+//					);
+					this.smileys0.source.forEach(addSmileysToDataProvider);
+					
+					}
+					if(this.karma>=25){
+					this.smileys25 = new ArrayCollection(this.karmaData[25]);
+					this.smileys25.source.forEach(addSmileysToDataProvider);
+					}
+					if(this.karma>=50) {
+					this.smileys50 = new ArrayCollection(this.karmaData[50]);
+					this.smileys50.source.forEach(addSmileysToDataProvider);
+					}
+					if(this.karma>=81){
+					this.smileys81 = new ArrayCollection(this.karmaData[81]);
+					this.smileys81.source.forEach(addSmileysToDataProvider);
+					}
+					if(this.karma>=100){
+					this.smileys100 = new ArrayCollection(this.karmaData[100]);
+					this.smileys100.source.forEach(addSmileysToDataProvider);
+					}
+					if(this.recuited>=10){
+					this.smileysRecuited10 = new ArrayCollection(this.recuitedData[10]);
+					this.smileysRecuited10.source.forEach(addSmileysToDataProvider);
+					}
+					
+				}
+			}
+			
+			private function addSmileysToDataProvider(smiley:Array, idx:int, ary:Array):void {
+				this.smileysDataProvider.addItem(smiley);
+			}
+
+			protected function dropdownlistSmileys_openHandler(event:DropDownEvent):void
+			{
+				// TODO Auto-generated method stub
+				var tile:UIComponent = UIComponent(this.dropDown);
+				tile.maxHeight = NaN;
+				tile.width = 400;
+			}
+			
+			private function smileyToLabel(item:Array):String{
+				return item[0];
+			}
+
+
+			protected function dropdownlistSmileys_rollOverHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.openDropDown();
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+</s:DropDownList>

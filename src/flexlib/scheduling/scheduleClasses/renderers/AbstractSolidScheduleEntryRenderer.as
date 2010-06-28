@@ -55,7 +55,7 @@ package flexlib.scheduling.scheduleClasses.renderers
   import spark.components.Label;
   import spark.components.RichEditableText;
   
-  import uiDispaly.verbContainer;
+  import uiDisplay.verbContainer;
 
   public class AbstractSolidScheduleEntryRenderer extends Box implements IScheduleEntryRenderer
   {
@@ -249,7 +249,7 @@ package flexlib.scheduling.scheduleClasses.renderers
 	tlformet.ligatureLevel = flash.text.engine.LigatureLevel.EXOTIC;
 	
 //      toolTip = time + "\n" + "isisSolid" + content.label;
-      contentLabel.text = content.username;
+      contentLabel.text = content.dispalyName;
       
 //      if (content.qualifier && contentQualifier.text == '') {
       if (content.qualifier) {
