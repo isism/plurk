@@ -2,12 +2,13 @@
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	       xmlns:s="library://ns.adobe.com/flex/spark" 
 	       xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
-	       xmlns:comp="comp.*" xmlns:events="events.*">
+	       xmlns:comp="comp.*" xmlns:events="events.*" creationComplete="init();">
+	        <!--controlBarContent="[this.addPlurkEditor]">-->
 	
 	<fx:Script>
 		<![CDATA[
-//			import com.plurkbridge.PlurkBridge;
 			import comp.PlurkBase;
+			import comp.addPlurkEditor;
 			
 			import events.AddNewPlurk;
 			
@@ -15,9 +16,10 @@
 			import flashx.textLayout.elements.TextFlow;
 			
 			import mx.controls.Alert;
+			import mx.managers.PopUpManager;
 
 //			import mx.formatters.DateFormatter;
-
+			private var addPlurk:addPlurkEditor = new addPlurkEditor();
 			private var NotificationURL:String = "/API/Realtime/getUserChannel";
 
 			private var Polling:String = "/API/Polling/getPlurks";
@@ -43,6 +45,11 @@
 				}
 			}
 			
+			private function init():void {
+				// Listen to "addPlurk" event!
+				this.addPlurk.addEventListener("addPlurk",addNewPlurkEventHandler);
+			}
+			
 			private function signinComplete (result:Object):void {
 				this.currentState = 'basicInformation';
 				Profile.onComplete(result);
@@ -50,6 +57,12 @@
 			
 			private function addNewPlurkEventHandler(e:AddNewPlurk):void {
 				this.timelineViewer.gotoNow();
+			}
+			
+			private function popUpEditorHandler(e:MouseEvent):void {
+				PopUpManager.addPopUp(this.addPlurk,this,true);
+				PopUpManager.centerPopUp(this.addPlurk);
+				PopUpManager.bringToFront(this.addPlurk);
 			}
 		]]>
 	</fx:Script>
@@ -63,6 +76,9 @@
 		<s:State name="register"/>
 		<s:State name="basicInformation"/>
 	</s:states>
+	<s:controlBarContent>
+		<s:Button label="Add a new Plurk" click="popUpEditorHandler(event)" includeIn="basicInformation"/>
+	</s:controlBarContent>
 	<mx:HBox>
 		
 		<mx:VBox>
@@ -72,7 +88,7 @@
 				<comp:basicInfo width="300" complete="{signinComplete}" includeIn="signin"/>
 				<comp:basicProfile width="100" id="Profile" includeIn="basicInformation" />
 				<comp:timelineViewer id="timelineViewer"   includeIn="basicInformation"/>
-				<comp:addPlurkEditor addPlurk="addNewPlurkEventHandler(event)"  includeIn="basicInformation"/>
+				<!--<comp:addPlurkEditor id="addPlurkEditor" addPlurk="addNewPlurkEventHandler(event)"  includeIn="basicInformation"/>-->
 				
 
 			</mx:HBox>

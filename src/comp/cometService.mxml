@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		    creationComplete="init();">
+	<fx:Script>
+		<![CDATA[
+			import comp.Realtime;
+			
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			private var comet_server:String;
+			[Bindable]
+			private var channel_name:String;
+			[Bindable]
+			private var offset:int=0;
+			[Bindable]
+			private var new_offset:int;
+			
+			private function init():void {
+				//requires login
+				Realtime.doGetUserChannel(cometResultHandler);
+			}
+			
+			private function cometResultHandler(result:Object):void {
+				comet_server = result.comet_server.replace(/\?.*/,"");
+				channel_name = result.channel_name;
+			}
+
+			protected function request_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.new_offset = e.result.new_offset;
+				if(this.new_offset!= -3){
+					this.offset = this.new_offset
+					if(e.result.data){
+					
+					}
+				}
+				else {
+					this.offset = 0;
+				}
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<!--You'll get an URL from /API/Realtime/getUserChannel and you do GET requests to this URL to get new data. 
+		Your request will sleep for about 50 seconds before returning a response if there is no new data added to your channel. -->
+		<mx:HTTPMultiService id="comet" baseURL="{this.comet_server}" concurrency="last" requestTimeout="55">
+			<mx:HTTPOperation id="request" method="GET" result="request_resultHandler(event)" showBusyCursor="true">
+				<mx:argumentNames>
+					<fx:String>channel</fx:String>
+					<fx:String>offset</fx:String>
+				</mx:argumentNames>
+			</mx:HTTPOperation>
+		</mx:HTTPMultiService>
+	</fx:Declarations>
+</s:BorderContainer>

@@ -10,7 +10,7 @@
 		  click="dropdownlistSmileys_rollOverHandler(event)"
 		 creationComplete="init()">
 	<s:layout>
-		<s:TileLayout requestedColumnCount="5" requestedRowCount="10" horizontalGap="0" horizontalAlign="center"/>
+		<s:TileLayout requestedColumnCount="5" requestedRowCount="5" horizontalGap="0" horizontalAlign="center"/>
 	</s:layout>
 	<fx:Script>
 		<![CDATA[
@@ -94,7 +94,7 @@
 				// TODO Auto-generated method stub
 				var tile:UIComponent = UIComponent(this.dropDown);
 				tile.maxHeight = NaN;
-				tile.width = 400;
+				tile.width = 330;
 			}
 			
 			private function smileyToLabel(item:Array):String{
