@@ -21,30 +21,45 @@ package comp
 		private static const markAsRead:String = "/API/Timeline/markAsRead";
 		private static const uploadPicture:String = "/API/Timeline/uploadPicture";
 		
+		/**
+		 * 
+		 * @param target
+		 * 
+		 */
 		public function Timeline(target:IEventDispatcher=null)
 		{
 			//TODO: implement function
 			super(target);
-//			Timeline
-//			/API/Timeline/getPlurk
-//				/API/Timeline/getPlurks
-//				/API/Timeline/getUnreadPlurks
-//				/API/Timeline/plurkAdd
-//				/API/Timeline/plurkDelete
-//				/API/Timeline/plurkEdit
-//				/API/Timeline/mutePlurks
-//				/API/Timeline/unmutePlurks
-//				/API/Timeline/markAsRead
-//				/API/Timeline/uploadPicture
 		}
+		/**
+		 * 
+		 * @param plurk_id plurk_id: The unique id of the plurk. Should be passed as a number, and not base 36 encoded.
+		 * @param callback
+		 * 
+		 */
 		public static function doGetPlurk(plurk_id:Number,callback:Function):void {
 			PlurkBase.load(getPlurk,{plurk_id: plurk_id},callback);
 		}
+		/**
+		 * 
+		 * @param callback
+		 * @param offset offset: Return plurks older than offset, formatted as 2009-6-20T21:55:34.
+		 * @param limit limit: How many plurks should be returned? Default is 20.
+		 * @param filter filter: Can be only_user, only_responded or only_private.
+		 * 
+		 */
 		public static function doGetPlurks(callback:Function, offset:Date = null, limit:String = null, filter:String = null):void {
 //			var params:Object = {};
 //			if (filter) { params.filter = filter }
 			PlurkBase.load(getPlurks, {offset: offset, limit: limit, filter: filter}, callback);
 		}
+		/**
+		 * 
+		 * @param callback
+		 * @param offset offset: Return plurks older than offset, formatted as 2009-6-20T21:55:34.
+		 * @param limit limit: Limit the number of plurks that is retunred.
+		 * 
+		 */
 		public static function doGetUnreadPlurks(callback:Function, offset:Date= null, limit:String = null):void {
 			PlurkBase.load(getUnreadPlurks,{offset: offset, limit: limit},callback);
 		}
@@ -72,22 +87,59 @@ package comp
 		public static function doPlurkAdd(content:String, qualifier:String, callback:Function, limited_to:Array=null, no_comments:String=null, lang:String = null):void {
 			PlurkBase.load(plurkAdd,{content: content, qualifier: qualifier, limited_to: limited_to,no_comments: no_comments, lang: lang},callback);
 		}
+		/**
+		 * 
+		 * @param plurk_id plurk_id: The id of the plurk.
+		 * @param callback
+		 * 
+		 */
 		public static function doPlurkDelete(plurk_id:Number, callback:Function):void {
 			PlurkBase.load(plurkDelete,{plurk_id: plurk_id},callback);
 		}
 		
+		/**
+		 * 
+		 * @param content content: The content of plurk.
+		 * @param plurk_id plurk_id: The id of the plurk.
+		 * @param callback
+		 * 
+		 */
 		public static function doPlurkEdit(content: String, plurk_id:Number, callback:Function):void {
 			PlurkBase.load(plurkEdit,{content: content, plurk_id: plurk_id},callback);
 		}
+		/**
+		 * 
+		 * @param ids ids: The plurk ids, formated as JSON, e.g. [342,23242,2323]
+		 * @param callback
+		 * 
+		 */
 		public static function doMutePlurks(ids:Array, callback:Function):void {
 			PlurkBase.load(mutePlurks,{ids: ids},callback);
 		}
+		/**
+		 * 
+		 * @param ids ids: The plurk ids, formated as JSON, e.g. [342,23242,2323]
+		 * @param callback
+		 * 
+		 */
 		public static function doUnmutePlurks(ids:Array, callback:Function):void {
 			PlurkBase.load(unmutePlurks,{ids: ids},callback);
 		}
+		/**
+		 * 
+		 * @param ids ids: The plurk ids, formated as JSON, e.g. [342,23242,2323]
+		 * @param callback
+		 * 
+		 */
 		public static function doMarkAsRead(ids:Array, callback:Function):void {
 			PlurkBase.load(markAsRead,{ids: ids},callback);
 		}
+		/**
+		 * 
+		 * @param image image: The image file.
+		 * @param callback
+		 * 
+		 */
 		public static function doUploadPicture(image:Image, callback:Function):void {
 			PlurkBase.load(uploadPicture,{image: image},callback);
 		}

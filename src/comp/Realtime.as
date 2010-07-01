@@ -8,6 +8,11 @@ package comp
 	{	
 		private static const getUserChannel:String = "/API/Realtime/getUserChannel";
 		
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doGetUserChannel(callback:Function):void {
 			PlurkBase.load(getUserChannel,{},callback);
 		}

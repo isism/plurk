@@ -6,29 +6,26 @@
 
 package org.bytearray.gif.player
 {	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.errors.ScriptTimeoutError;
-	import flash.events.Event;
-	import flash.events.IOErrorEvent;
 	import flash.events.TimerEvent;
-	import flash.net.URLLoader;
 	import flash.net.URLLoaderDataFormat;
+	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.events.Event;
 	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.utils.getTimer;
-	
-	import mx.core.IVisualElement;
-	
-	import org.bytearray.gif.decoder.GIFDecoder;
-	import org.bytearray.gif.errors.FileTypeError;
-	import org.bytearray.gif.events.FileTypeEvent;
-	import org.bytearray.gif.events.FrameEvent;
-	import org.bytearray.gif.events.GIFPlayerEvent;
-	import org.bytearray.gif.events.TimeoutEvent;
+	import flash.events.IOErrorEvent;
+	import flash.errors.ScriptTimeoutError;
 	import org.bytearray.gif.frames.GIFFrame;
+	import org.bytearray.gif.decoder.GIFDecoder;
+	import org.bytearray.gif.events.GIFPlayerEvent;
+	import org.bytearray.gif.events.FrameEvent;
+	import org.bytearray.gif.events.TimeoutEvent;
+	import org.bytearray.gif.events.FileTypeEvent;
+	import org.bytearray.gif.errors.FileTypeError;
 	
 	public class GIFPlayer extends Bitmap
 	{
@@ -115,16 +112,18 @@ package org.bytearray.gif.player
 			switch ( gifDecoder.disposeValue ) 
 			{		
 				case 1:
-					if ( !iIndex ) 
+					if ( !iIndex ) {
 						bitmapData = aFrames[ 0 ].bitmapData.clone();
+                    }
 					bitmapData.draw ( aFrames[ iIndex ].bitmapData );
-					break
+					break;
 				case 2:
 					bitmapData = aFrames[ iIndex ].bitmapData;
 					break;
+                default:
+                    bitmapData = aFrames[ iIndex ].bitmapData;
+                    break;
 			}
-			
-//			bitmapData = aFrames[ iIndex ].bitmapData;
 			
 			dispatchEvent ( new FrameEvent ( FrameEvent.FRAME_RENDERED, aFrames[ iIndex ] ) );
 		}

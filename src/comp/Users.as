@@ -20,29 +20,46 @@ package comp
 		private static const update:String = "/API/Users/update";
 		private static const updatePicture:String = "/API/Users/updatePicture";
 		
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doLogin(callback:Function):void {
 			PlurkBase.load(login, { username: username, password: password }, callback);
 		}
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doLogout(callback:Function):void {
 			PlurkBase.load(logout,{}, callback);
 		}
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doUpdate(callback:Function):void {
 			PlurkBase.load(update,{ password: password }, callback);
 		}
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doUpdatePicture(callback:Function):void {
 			PlurkBase.load(updatePicture,{}, callback);
 		}
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doRegister(callback:Function):void {
 			PlurkBase.load(register,{}, callback);
 		}
 		
-
-		//		Users
-//		/API/Users/register
-//			/API/Users/login
-//			/API/Users/logout
-//			/API/Users/update
-//			/API/Users/updatePicture
-
 	}
 }

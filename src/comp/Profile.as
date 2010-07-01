@@ -11,9 +11,20 @@ package comp
 		private static const getPublicProfile:String = "/API/Profile/getPublicProfile";
 		
 		
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function  doGetOwnProfile(callback:Function):void {
 			PlurkBase.load(getOwnProfile,{},callback);
 		}
+		/**
+		 * 
+		 * @param user_id user_id: The user_id of the public profile. Can be integer (like 34) or nick name (like amix).
+		 * @param callback
+		 * 
+		 */
 		public static function doGetPublicProfile(user_id:*,callback:Function):void {
 			PlurkBase.load(getPublicProfile,{user_id:user_id},callback);
 		}

@@ -9,6 +9,11 @@ package comp
 		
 		private static const get:String = "/API/Emoticons/get";
 		
+		/**
+		 * 
+		 * @param callback
+		 * 
+		 */
 		public static function doGet(callback:Function):void {
 			PlurkBase.load(get,{},callback);
 		}
