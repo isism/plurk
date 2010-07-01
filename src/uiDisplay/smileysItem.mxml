@@ -2,31 +2,44 @@
 <s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		xmlns:mx="library://ns.adobe.com/flex/mx"  xmlns:gif="org.bytearray.gif.*" 
-		autoDrawBackground="true" xmlns:player="org.bytearray.gif.player.*">
-		 <!--dataChange="init();">-->
+		autoDrawBackground="true" xmlns:player="org.bytearray.gif.player.*"
+		 dataChange="init();">
 	<fx:Script>
 		<![CDATA[
-//			import org.bytearray.gif.events.GIFPlayerEvent;
-//			import org.bytearray.gif.player.GIFPlayer;
-//			
-//			private var smileyGIFPlayer:GIFPlayer = new GIFPlayer();
-//			import mx.collections.ArrayCollection;
-//			[Bindable]
-//			private var dataObject:Object = data;
+	
+ 			import org.bytearray.gif.events.GIFPlayerEvent;
+ 			import org.bytearray.gif.player.GIFPlayer;
 			
-//			private function init():void {
-//				if (!data) { return; }
-//				var urlString:String = data[1];
-//				var figURL:URLRequest = new URLRequest(urlString);
-//				
-//				this.smileyGIFPlayer.load(figURL);
-////				this.smileyGIFPlayer.play();
-//				this.gifIMG.addChild(this.smileyGIFPlayer);
-////				addElement(this.smileyGIFPlayer);
-//				this.smileyGIFPlayer.addEventListener(GIFPlayerEvent.COMPLETE, function(event:GIFPlayerEvent):void{
-//					this.smileyGIFPlayer.play()
-//				});
-//			}
+			private var smileyGIFPlayer:GIFPlayer = new GIFPlayer();
+			import mx.collections.ArrayCollection;
+			[Bindable]
+			private var dataObject:Object = data;
+			
+			private function init():void {
+				if (!data) { return; }
+				var urlString:String = data[1];
+				// XXX
+/* 				var count:int = this.gifIMG.numChildren;
+				for (var i:int = count-1; i > 0; i--) {
+					this.gifIMG.removeChildAt(i);
+				} */
+				if (/\.gif$/.test(urlString)){
+//					this.gifIMG.source = "http://upload.wikimedia.org/wikipedia/commons/c/c0/Blank.gif";
+					var figURL:URLRequest = new URLRequest(urlString);
+					this.smileyGIFPlayer.load(figURL);
+					this.gifIMG.addChild(this.smileyGIFPlayer);
+					this.smileyGIFPlayer.addEventListener(GIFPlayerEvent.COMPLETE, function(e:GIFPlayerEvent):void{
+						/* try {
+						this.smileyGIFPlayer.play();
+						} catch (e:*) {} */
+//						this.smileyGIFPlayer.play();
+						e.currentTarget.play();
+					});
+				}
+				else {
+					this.gifIMG.source = urlString;
+				}				
+			} 
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -35,7 +48,8 @@
 <!--	<player:GIFPlayer id="smileyGIFPlayer">
 		
 	</player:GIFPlayer>-->
-	<mx:Image id="gifIMG" source="{data[1]}" toolTip="{data[0]}"/>
+	<mx:Image id="gifIMG" toolTip="{data[0]}" width="60" height="30"/>
+<!--	<mx:Image id="gifIMG" source="{data[1]}" toolTip="{data[0]}"/>-->
 <!--	<mx:Image source="{ArrayCollection(data[1]).getItemAt(1)}"/>-->
 <!--	<s:Label text="{data[0]}"/>-->
 	

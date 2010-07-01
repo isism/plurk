@@ -78,6 +78,7 @@
 	</s:states>
 	<s:controlBarContent>
 		<s:Button label="Add a new Plurk" click="popUpEditorHandler(event)" includeIn="basicInformation"/>
+<!--		<comp:cometService/>-->
 	</s:controlBarContent>
 	<mx:HBox>
 		

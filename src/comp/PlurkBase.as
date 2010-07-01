@@ -7,7 +7,8 @@ package comp
 		private static var _plurkBridge:PlurkBridge = new PlurkBridge();
 		public static function load (method:String,  params:Object,  callback:Function, isSecure:Boolean=false):void {
 			for  (var key:String in params) {
-				if (params[key] == null) {
+				if (params[key] == null ) {
+//				if (params[key] == null || isNaN(params[key])) {
 					delete params[key];
 				}
 			}

@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		   xmlns:s="library://ns.adobe.com/flex/spark" 
-		   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+		   xmlns:mx="library://ns.adobe.com/flex/mx" width="200" height="200"
 		    creationComplete="init();">
 	<fx:Script>
 		<![CDATA[
+			import com.serialization.json.JSON;
+			
 			import comp.Realtime;
 			
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			
+			import spark.components.TextArea;
 			
 			[Bindable]
 			private var comet_server:String;
 			[Bindable]
 			private var channel_name:String;
 			[Bindable]
-			private var offset:int=0;
+			private var offset:int;
 			[Bindable]
 			private var new_offset:int;
+			[Bindable]
+			private var resultData:Object;
+			[Bindable]
+			private var demo:TextArea = new TextArea();
 			
 			private function init():void {
 				//requires login
@@ -26,21 +36,55 @@
 			private function cometResultHandler(result:Object):void {
 				comet_server = result.comet_server.replace(/\?.*/,"");
 				channel_name = result.channel_name;
+				// XXX
+				this.addElement(this.demo);
+				this.request.send(this.channel_name,0);
 			}
 
-			protected function request_resultHandler(event:ResultEvent):void
+			protected function request_resultHandler(e:ResultEvent):void
 			{
 				// TODO Auto-generated method stub
-				this.new_offset = e.result.new_offset;
-				if(this.new_offset!= -3){
-					this.offset = this.new_offset
-					if(e.result.data){
-					
-					}
+				this.resultData = JSON.deserialize(e.result.toString());
+				this.new_offset = this.resultData.new_offset;
+				if(this.new_offset== -3){
+					this.offset = 0;
+//					this.request.send(this.channel_name,this.offset);
 				}
 				else {
-					this.offset = 0;
+					this.offset = this.new_offset;
+					if(this.resultData.data){
+//					DispatchEvent
+						for each (var i:Object in this.resultData.data){
+							var dataType:String = i.type;
+							switch (dataType){
+								case "new_plurk":
+									//XXX
+									var txtNewPlurk:String ="user "+ i.owner_id.toString() + "has a new plurk added.";
+									this.demo.appendText(txtNewPlurk+ "\n");
+									break;
+								case "new_response":
+								// XXX 
+									var txtResponse:String= "plurk" + i.plurk_id.toString() + "has" + i.response_count.toString() +"new response(s).";
+									this.demo.appendText(txtResponse+ "\n");
+									break;
+								default:
+									
+							}
+						}
+						
+//						this.request.send(this.channel_name,this.offset);
+					}
 				}
+				this.request.send(this.channel_name,this.offset);
+			}
+
+
+			protected function request_faultHandler(e:FaultEvent):void
+			{
+				// TODO Auto-generated method stub
+				Alert.show(e.fault.faultDetail,e.fault.faultString);
+				// XXX
+				this.request.send(this.channel_name,0);
 			}
 
 		]]>
@@ -50,7 +94,7 @@
 		<!--You'll get an URL from /API/Realtime/getUserChannel and you do GET requests to this URL to get new data. 
 		Your request will sleep for about 50 seconds before returning a response if there is no new data added to your channel. -->
 		<mx:HTTPMultiService id="comet" baseURL="{this.comet_server}" concurrency="last" requestTimeout="55">
-			<mx:HTTPOperation id="request" method="GET" result="request_resultHandler(event)" showBusyCursor="true">
+			<mx:HTTPOperation resultFormat="text" id="request" name="cometO" method="GET" url="{this.comet_server}" result="request_resultHandler(event)" fault="request_faultHandler(event)" showBusyCursor="true">
 				<mx:argumentNames>
 					<fx:String>channel</fx:String>
 					<fx:String>offset</fx:String>
@@ -58,4 +102,5 @@
 			</mx:HTTPOperation>
 		</mx:HTTPMultiService>
 	</fx:Declarations>
+<!--	<s:TextArea width="300" height="50" id="demo"/>-->
 </s:BorderContainer>

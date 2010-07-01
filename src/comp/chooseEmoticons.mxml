@@ -86,7 +86,16 @@
 			}
 			
 			private function addSmileysToDataProvider(smiley:Array, idx:int, ary:Array):void {
+				// XXX for  the irritating (bzzz)
+				if(smiley[1]  is Array){
+					var newArray:Array = new Array();
+					newArray[0] = smiley[0];
+					newArray[1] =smiley[1][1];
+					this.smileysDataProvider.addItem(newArray);
+				}
+				else {
 				this.smileysDataProvider.addItem(smiley);
+				}	
 			}
 
 			protected function dropdownlistSmileys_openHandler(event:DropDownEvent):void

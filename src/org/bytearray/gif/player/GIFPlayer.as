@@ -124,6 +124,8 @@ package org.bytearray.gif.player
 					break;
 			}
 			
+//			bitmapData = aFrames[ iIndex ].bitmapData;
+			
 			dispatchEvent ( new FrameEvent ( FrameEvent.FRAME_RENDERED, aFrames[ iIndex ] ) );
 		}
 		

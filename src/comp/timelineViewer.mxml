@@ -11,6 +11,10 @@
 		<![CDATA[
 //			import comp.Timeline;
 			//Timeline
+			import comp.cometService;
+			
+			import events.AddNewPlurk;
+			
 			import flexlib.scheduling.samples.ScheduleData;
 			import flexlib.scheduling.scheduleClasses.BackgroundItem;
 			import flexlib.scheduling.scheduleClasses.ColoredScheduleEntry;
@@ -22,8 +26,8 @@
 			import mx.events.ScrollEvent;
 			import mx.events.ScrollEventDirection;
 			import mx.formatters.DateFormatter;
-			
-			import events.AddNewPlurk;
+//			[Bindable]
+			private var cometServerArea:cometService;			
 			
 			[Bindable]
 			private var startDate : Date;
@@ -91,16 +95,24 @@
 					timeline.xPosition = event.position;
 				}
 			} 
-			
-			[Bindable(event="addPlurk")]
+// XXX		try comp.Polling	
+//			[Bindable(event="addPlurk")]
 			public function gotoNow() : void
 			{
 				var time : Date = new Date();
-				comp.Timeline.doGetPlurks(getPlurksComplete,null,"50");
+				var twoDays:Date = new Date(time.getTime() - DateUtil.DAY_IN_MILLISECONDS*2);
+				var twoDaysAgo:String = this.dateFormatter.format(twoDays.toUTCString());
+//				offset: Return plurks newer than offset, formatted as 2009-6-20T21:55:34.
+				comp.Polling.doGetPlurks(twoDaysAgo,getPlurksComplete,"200");
+//				comp.Timeline.doGetPlurks(getPlurksComplete,null,"50");
 //				PlurkBase.load(this.getPlurks,{},getPlurksComplete);
-				//				this.bridge.load(this.getPlurks,{api_key:this.API_KEY},getPlurksComplete);
-				//				this.APIMethod(this.getPlurks,this.ob_PlurksAPI,getPlurksComplete);
 				scheduleViewer.moveToTime( time.getTime() - startDate.getTime() );
+			}
+			
+				//  XXX
+			private function getComet(e:MouseEvent):void {				
+				this.cometServerArea = new cometService();
+				this.addElement(this.cometServerArea);
 			}
 			
 			private function gotoSelectedEntry() : void
@@ -240,15 +252,9 @@
 						}
 //						entry.width = this.btnNow.measureHTMLText(i.content).width + 50;
 						entry.backgroundColor = entryBGcolor;
-
-						//						this.bridge.load(this.getPlurk,{api_key:this.API_KEY,plurk_id:m},getPlurkComplete);
-						//						entry.ownerImgUrl = this.user_avatar_url;
 						addEntryData.addItem(entry);
 					}
 					this.entryData = addEntryData;
-//					PlurkBase.load(this.NotificationURL,{},getNotification);
-					//					this.bridge.load(this.NotificationURL,{api_key:this.API_KEY},getNotification);
-					
 				}
 			}
 			
@@ -283,6 +289,7 @@
 			<mx:Label text="Goto:"/>
 			<mx:Button id="btnNow" label="Now" click="gotoNow();"/>
 			<mx:Button label="Selected" click="gotoSelectedEntry();"/>
+			<s:Button label="getComet" click="getComet(event)"/>
 			<mx:Spacer width="100%"/>
 			<mx:Label text="Zoom:"/>
 			<mx:HSlider 
