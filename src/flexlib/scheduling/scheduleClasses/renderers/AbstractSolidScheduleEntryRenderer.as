@@ -30,37 +30,39 @@
 
 package flexlib.scheduling.scheduleClasses.renderers
 {
-  import comp.PlurkParser;
-  import comp.Responses;
-  import comp.responsesViewer;
-  
-  import flash.text.engine.Kerning;
-  import flash.text.engine.LigatureLevel;
-  import flash.text.engine.LineJustification;
-  
-  import flashx.textLayout.conversion.TextConverter;
-  import flashx.textLayout.formats.TextLayoutFormat;
-  
-  import flexlib.scheduling.scheduleClasses.IScheduleEntry;
-  import flexlib.scheduling.scheduleClasses.SimpleScheduleEntry;
-  
-  import mx.collections.ArrayCollection;
-  import mx.containers.Box;
-  import mx.containers.HBox;
-  import mx.controls.Alert;
-  import mx.controls.Image;
-  import mx.controls.Text;
-  import mx.core.ScrollPolicy;
-  import mx.core.mx_internal;
-  import mx.formatters.DateFormatter;
-  import mx.styles.CSSStyleDeclaration;
-  import mx.styles.StyleManager;
-  
-  import spark.components.BorderContainer;
-  import spark.components.Label;
-  import spark.components.RichEditableText;
-  
-  import uiDisplay.verbContainer;
+//  import comp.PlurkParser;
+//  import comp.Responses;
+//  import comp.responsesViewer;
+	
+	import comp.responsesPopUp;
+	
+	import flash.text.engine.Kerning;
+	import flash.text.engine.LigatureLevel;
+	import flash.text.engine.LineJustification;
+	
+	import flashx.textLayout.conversion.TextConverter;
+	import flashx.textLayout.formats.TextLayoutFormat;
+	
+	import flexlib.scheduling.scheduleClasses.IScheduleEntry;
+	import flexlib.scheduling.scheduleClasses.SimpleScheduleEntry;
+	
+	import mx.collections.ArrayCollection;
+	import mx.containers.Box;
+	import mx.containers.HBox;
+	import mx.controls.Alert;
+	import mx.controls.Image;
+	import mx.controls.Text;
+	import mx.core.ScrollPolicy;
+	import mx.core.mx_internal;
+	import mx.formatters.DateFormatter;
+	import mx.styles.CSSStyleDeclaration;
+	import mx.styles.StyleManager;
+	
+	import spark.components.BorderContainer;
+	import spark.components.Label;
+	import spark.components.RichEditableText;
+	
+	import uiDisplay.verbContainer;
 
   public class AbstractSolidScheduleEntryRenderer extends Box implements IScheduleEntryRenderer
   {
@@ -68,6 +70,7 @@ package flexlib.scheduling.scheduleClasses.renderers
     public var contentQualifier:Label;
     public var verbGroup:verbContainer;
     public var verbBox:HBox;
+    public var responsePopUp:responsesPopUp;
     public var contentUserImage:Image;
     public var contentText:RichEditableText;
     public var contentHBox:HBox;
@@ -75,6 +78,8 @@ package flexlib.scheduling.scheduleClasses.renderers
     public var entryWidth:int;
     [Bindable]
     public var entryID:uint;
+    [Bindable]
+    public var responsesCount:uint;
     
 //    public var contentText:Text;
 
@@ -197,6 +202,8 @@ package flexlib.scheduling.scheduleClasses.renderers
       contentQualifier = new Label();
       verbGroup = new verbContainer();
 //      verbGroup.verb = this.contentQualifier.text;
+// XXX
+      responsePopUp = new responsesPopUp();
      
       verbBox = new HBox();
       verbBox.height = 20;
@@ -206,6 +213,7 @@ package flexlib.scheduling.scheduleClasses.renderers
 //      verbGroup.setStyle("borderColor",0xff0000);
 //      verbGroup.layout
       verbBox.addChild(contentLabel);
+//      verbBox.addChild(responsePopUp);
       addChild(verbBox);
 //      verbGroup.addElement(contentLabel);
 //      verbGroup.addElement(contentQualifier);
@@ -230,7 +238,7 @@ package flexlib.scheduling.scheduleClasses.renderers
         alpha = 1.00;
 	// XXX
 	// isis added responsesBlock
-	Responses.doGet(entryID,0,getResponseComplete);
+//	Responses.doGet(entryID,0,getResponseComplete);
       }
       else
       {
@@ -241,22 +249,22 @@ package flexlib.scheduling.scheduleClasses.renderers
       }
     }
 	// XXX
-	private function getResponseComplete(result:Object):void {
-		if (result.error_text) {
-			Alert.show(result.error_text);
-		}
-		else {
-			var responsesData:ArrayCollection = new ArrayCollection();
-			var responsesBlock:responsesViewer = new responsesViewer();
-			import mx.core.FlexGlobals;
-			responsesData = PlurkParser.responsesParse(result);
-			FlexGlobals.topLevelApplication.addElement(responsesBlock);
-			responsesBlock.top = 0;
-			responsesBlock.right = 0;
-			responsesBlock.Responses.dataProvider = responsesData;
-		}
-		
-	}
+//	private function getResponseComplete(result:Object):void {
+//		if (result.error_text) {
+//			Alert.show(result.error_text);
+//		}
+//		else {
+//			var responsesData:ArrayCollection = new ArrayCollection();
+//			var responsesBlock:responsesViewer = new responsesViewer();
+//			import mx.core.FlexGlobals;
+//			responsesData = PlurkParser.responsesParse(result);
+//			FlexGlobals.topLevelApplication.addElement(responsesBlock);
+//			responsesBlock.top = 0;
+//			responsesBlock.right = 0;
+//			responsesBlock.Responses.dataProvider = responsesData;
+//		}
+//		
+//	}
     protected function setTextContent(content:SimpleScheduleEntry):void
     {
 //      if (!content.label)
@@ -302,7 +310,11 @@ package flexlib.scheduling.scheduleClasses.renderers
 //	this.validateNow();
 	//      this.width = content.width;
 //      this.setStyle("backgroundColor",0x3399cc);
+      this.verbBox.addChild(responsePopUp);
 	this.entryID = content.plurk_id;
+	this.responsesCount = content.response_count;
+      responsePopUp.responsesCount = this.responsesCount;
+     responsePopUp.plurk_id = this.entryID;
       updateSelected();
     }
 

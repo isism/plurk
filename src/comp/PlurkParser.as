@@ -82,6 +82,7 @@ package comp
 					entry.fullName = userProfile.full_name;
 					entry.label= i.content;
 					entry.plurk_id = i.plurk_id;
+					entry.response_count = i.response_count;
 					//						entry.label =TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
 					var limited:String = i.limited_to;
 					var entryBGcolor:int;
@@ -111,6 +112,7 @@ package comp
 			
 			var microResponseData:Object;
 			var friendsData:Object;
+//			var responsesArray:Array;
 			var TimeOffSet:Number;
 			var readResponsesOffset:uint;
 			if(result.error_text)
@@ -124,6 +126,7 @@ package comp
 				//Success
 				//					trace(result.user_info.display_name);
 				microResponseData = result.responses;
+//				responsesArray = microResponseData as Array;
 				friendsData = result.friends;
 				readResponsesOffset = result.responses_seen;
 				var addEntryData:ArrayCollection = new ArrayCollection();

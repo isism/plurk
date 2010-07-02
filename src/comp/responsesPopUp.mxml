@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	 xmlns:s="library://ns.adobe.com/flex/spark" 
+	 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:comp="comp.*">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import comp.PlurkParser;
+			import comp.Responses;
+			import comp.addPlurkEditor;
+			import comp.responsesViewer;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			
+			[Bindable]
+			public var responsesCount:Number;
+			[Bindable]
+			public var plurk_id:uint;
+			[Bindable]
+			private var ViewerVisible:Boolean = false;
+			
+			private function toggleResponses(e:Event):void {
+				if(e.target.selected){
+
+					Responses.doGet(this.plurk_id,0,getResponseComplete);
+					this.responsesPop.displayPopUp= true;
+				}
+				else {
+					this.responsesPop.displayPopUp = false;
+				}
+			}			
+			
+			private function getResponseComplete(result:Object):void {
+				if (result.error_text) {
+					Alert.show(result.error_text);
+				}
+				else {
+					var responsesData:ArrayCollection = new ArrayCollection();
+//					var responsesBlock:responsesViewer = new responsesViewer();
+//					import mx.core.FlexGlobals;
+					responsesData = PlurkParser.responsesParse(result);
+					this.responsesCount = responsesData.length;
+					if (this.responsesCount >0) {
+						this.ViewerVisible = true;
+					}else {
+						this.ViewerVisible = false;
+					}
+					this.btn_resCount.validateNow();
+//					FlexGlobals.topLevelApplication.addElement(responsesBlock);
+//					this.responsesPop.addChild(responsesBlock);
+//					responsesBlock.top = 0;
+//					responsesBlock.right = 0;
+					
+//					this.viewer.responsesData.removeAll();
+//					for (var i:uint = 0; i < responsesData.length ; i++ ) {
+//						this.viewer.responsesData.addItem(responsesData.getItemAt(i));
+//					}
+//					this.viewer.responsesData.refresh();
+					this.viewer.Responses.dataProvider = responsesData;
+//					responsesBlock.Responses.dataProvider = responsesData;
+					
+				}
+				
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:ToggleButton id="btn_resCount" label="{this.responsesCount.toString()+ '回應'}" click="toggleResponses(event)"/>
+	<s:PopUpAnchor id="responsesPop" popUpPosition="below">
+		<s:BorderContainer>
+			<s:layout>
+				<s:VerticalLayout>
+				</s:VerticalLayout>
+			</s:layout>
+			<comp:responsesViewer id="viewer" />
+			<comp:addPlurkEditor/>
+		</s:BorderContainer>
+	</s:PopUpAnchor>
+</s:Group>
