@@ -2,8 +2,8 @@
 <s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		xmlns:s="library://ns.adobe.com/flex/spark" 
 		xmlns:mx="library://ns.adobe.com/flex/mx"  xmlns:gif="org.bytearray.gif.*" 
-		autoDrawBackground="true" xmlns:player="org.bytearray.gif.player.*"
-		 dataChange="">
+		autoDrawBackground="true" xmlns:player="org.bytearray.gif.player.*">
+		 <!--dataChange="">-->
 	<fx:Script>
 		<![CDATA[
 	
@@ -51,6 +51,5 @@
 <!--	<mx:Image id="gifIMG" toolTip="{data[0]}" width="60" height="30"/>-->
 	<player:GIFImage id="gifIMG" source="{data[1]}"  toolTip="{data[0]}"/>
 <!--	<mx:Image source="{ArrayCollection(data[1]).getItemAt(1)}"/>-->
-<!--	<s:Label text="{data[0]}"/>-->
 	
 </s:ItemRenderer>

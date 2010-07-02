@@ -12,6 +12,7 @@
 //			import comp.Timeline;
 			//Timeline
 			import comp.cometService;
+			import comp.PlurkParser;
 			
 			import events.AddNewPlurk;
 			
@@ -42,14 +43,6 @@
 			//
 			[Bindable]
 			private var entryData:ArrayCollection;
-			[Bindable]
-			private var microData:Object;
-			[Bindable]
-			private var usersData:Object;
-			[Bindable]
-			private var TimeOffSet:Number;
-			[Bindable]
-			private var now:Date = new Date();
 			[Bindable]
 			private var hr24Ago :String ;
 			[Bindable]
@@ -100,10 +93,10 @@
 			public function gotoNow() : void
 			{
 				var time : Date = new Date();
-				var twoDays:Date = new Date(time.getTime() - DateUtil.DAY_IN_MILLISECONDS*2);
+				var twoDays:Date = new Date(time.getTime() - DateUtil.DAY_IN_MILLISECONDS*5);
 				var twoDaysAgo:String = this.dateFormatter.format(twoDays.toUTCString());
 //				offset: Return plurks newer than offset, formatted as 2009-6-20T21:55:34.
-				comp.Polling.doGetPlurks(twoDaysAgo,getPlurksComplete,"200");
+				comp.Polling.doGetPlurks(twoDaysAgo,getPlurksComplete,"500");
 //				comp.Timeline.doGetPlurks(getPlurksComplete,null,"50");
 //				PlurkBase.load(this.getPlurks,{},getPlurksComplete);
 				scheduleViewer.moveToTime( time.getTime() - startDate.getTime() );
@@ -176,86 +169,7 @@
 			
 			private function getPlurksComplete(result:Object):void
 			{
-				if(result.error_text)
-				{
-					//Error handler
-					//					trace(result.error_text);
-					Alert.show(result.error_text);
-				}
-				else
-				{
-					//Success
-					//					trace(result.user_info.display_name);
-					this.microData = result.plurks;
-					this.usersData = result.plurk_users;
-					var addEntryData:ArrayCollection = new ArrayCollection();
-					for each (var i:Object in this.microData) {
-						var entry:ColoredScheduleEntry = new ColoredScheduleEntry();
-						var now:Date = new Date();
-						var postedDateUTC:Date;
-						var postedStr:String = i.posted.toString();
-						var newPostedStr:String= postedStr.split(" GMT").join("");
-						//						Alert.show(newPostedStr);
-						//						var postedFormatter:DateFormatter = new DateFormatter();
-						//						postedFormatter.formatString = "EEE, DD MMM YYYY JJ:NN:SS";
-						var postedDate:Date = DateFormatter.parseDateString(newPostedStr);
-						this.TimeOffSet = now.getTimezoneOffset();
-						//						Alert.show(postedDate.toUTCString());
-						//						Alert.show(now.toUTCString(),this.TimeOffSet.toString());
-						entry.startDate = new Date(postedDate.getTime() - DateUtil.MINUTE_IN_MILLISECONDS*this.TimeOffSet);
-						//						entry.startDate = DateUtil.clearTime(new Date());
-						var widthSecond:int = (this.btnNow.measureHTMLText(i.content).width)/15;
-						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.MINUTE_IN_MILLISECONDS*(widthSecond +10));
-//						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.MINUTE_IN_MILLISECONDS*20 );
-						//						entry.endDate = new Date(entry.startDate.getTime() + DateUtil.HOUR_IN_MILLISECONDS*24 );
-						var j:Number = i.owner_id;
-						var z:String = j.toString();
-						var userProfile:Object= new Object();
-						userProfile = this.usersData[j];
-						//						Alert.show([userProfile].length.toString());
-						if(userProfile.has_profile_image == 1 && userProfile.avatar == (null||0)){
-							//									entry.ownerImgUrl = "http://avatars.plurk.com/"+z+"-small.gif";
-							entry.ownerImgUrl = "http://avatars.plurk.com/"+z+"-medium.gif";
-						}
-						else if(userProfile.has_profile_image == 1 && userProfile.avatar != (null&&0)){
-							//									entry.ownerImgUrl = "http://avatars.plurk.com/" + z + "-small" +userProfile.avatar +".gif";
-							entry.ownerImgUrl = "http://avatars.plurk.com/" + z+ "-medium" +userProfile.avatar +".gif";
-						}
-						else if(userProfile.has_profile_image == 0){
-							entry.ownerImgUrl = "http://www.plurk.com/static/default_medium.gif";
-							//									entry.ownerImgUrl = "http://www.plurk.com/static/default_small.gif";
-						}
-						
-						entry.qualifier = i.qualifier;
-						entry.nickName = userProfile.nick_name;
-						entry.dispalyName = userProfile.display_name;
-						entry.fullName = userProfile.full_name;
-						entry.label= i.content;
-						//						entry.label =TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
-						//						Alert.show(TextConverter.importToFlow( i.content, TextConverter.TEXT_FIELD_HTML_FORMAT) as String);
-						//						Alert.show(entry.label);
-						var limited:String = i.limited_to;
-						var entryBGcolor:int;
-						switch(limited){
-							case null:
-								entryBGcolor = 0xFFFFFF;
-								//white
-								break;
-							case "|0|":
-								entryBGcolor = 0x99CCFF;
-								//light blue
-								break;
-							default:
-								entryBGcolor = 0x999999;
-								//grey
-								break;
-						}
-//						entry.width = this.btnNow.measureHTMLText(i.content).width + 50;
-						entry.backgroundColor = entryBGcolor;
-						addEntryData.addItem(entry);
-					}
-					this.entryData = addEntryData;
-				}
+				this.entryData = PlurkParser.parse(result);
 			}
 			
 		]]>

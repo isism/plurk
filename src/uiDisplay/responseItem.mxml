@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx" 
+		autoDrawBackground="true" xmlns:uiDisplay="uiDisplay.*"
+		 dataChange="init();" height="{25+this.contentText.height +8 }">
+	<fx:Script>
+		<![CDATA[
+			import flash.text.engine.Kerning;
+			import flash.text.engine.LigatureLevel;
+			import flash.text.engine.LineJustification;
+			
+			import flashx.textLayout.conversion.TextConverter;
+			import flashx.textLayout.formats.TextLayoutFormat;
+			
+			import uiDisplay.verbContainer;
+			
+				
+			private function init():void {
+				
+				var tlformet:TextLayoutFormat = new TextLayoutFormat();
+				tlformet.fontSize = 14;
+				tlformet.kerning = flash.text.engine.Kerning.AUTO ;
+				tlformet.ligatureLevel = flash.text.engine.LigatureLevel.EXOTIC;
+				
+				this.contentText.editable = false;
+//				var userImg:String = data.ownerImgUrl;
+//				var userImg:String = "<img src=\"" +data.ownerImgUrl + "\">";
+				contentText.textFlow = TextConverter.importToFlow(data.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				contentText.textFlow.format = tlformet;
+				
+				var qualifierLabel:Label = new Label();
+				qualifierLabel.text = data.qualifier;
+				this.qualifier.verb = data.qualifier;
+				this.qualifier.addElement(qualifierLabel);
+				this.qualifier.width = this.displayName.measureText(qualifierLabel.text).width + 10;
+				
+			}
+		]]>
+	</fx:Script>
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<s:BorderContainer height="25" width="25" borderVisible="false" backgroundAlpha="0">	
+		<mx:Image source="{data.ownerImgUrl}"/>
+	</s:BorderContainer>
+	<s:BorderContainer borderVisible="false" backgroundAlpha="0">
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>		
+		<s:BorderContainer borderVisible="false" height="25" backgroundAlpha="0">
+			<s:layout>
+				<s:HorizontalLayout/>
+			</s:layout>
+			<s:Label id="displayName" text="{data.display_name}" fontWeight="bold"/>
+			<uiDisplay:verbContainer id="qualifier" fontSize="15"/>
+		</s:BorderContainer>
+		<s:BorderContainer height="{this.contentText.height}" borderVisible="false" backgroundAlpha="0">
+		<s:RichEditableText id="contentText"/>
+		</s:BorderContainer>
+		<s:Line width="100%"/>
+	</s:BorderContainer>
+	
+</s:ItemRenderer>

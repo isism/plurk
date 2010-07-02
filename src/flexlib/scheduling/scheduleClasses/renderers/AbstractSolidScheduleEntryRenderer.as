@@ -30,6 +30,10 @@
 
 package flexlib.scheduling.scheduleClasses.renderers
 {
+  import comp.PlurkParser;
+  import comp.Responses;
+  import comp.responsesViewer;
+  
   import flash.text.engine.Kerning;
   import flash.text.engine.LigatureLevel;
   import flash.text.engine.LineJustification;
@@ -40,6 +44,7 @@ package flexlib.scheduling.scheduleClasses.renderers
   import flexlib.scheduling.scheduleClasses.IScheduleEntry;
   import flexlib.scheduling.scheduleClasses.SimpleScheduleEntry;
   
+  import mx.collections.ArrayCollection;
   import mx.containers.Box;
   import mx.containers.HBox;
   import mx.controls.Alert;
@@ -68,6 +73,8 @@ package flexlib.scheduling.scheduleClasses.renderers
     public var contentHBox:HBox;
     
     public var entryWidth:int;
+    [Bindable]
+    public var entryID:uint;
     
 //    public var contentText:Text;
 
@@ -221,6 +228,9 @@ package flexlib.scheduling.scheduleClasses.renderers
         setStyle("borderColor", 0xffffff);
         setStyle("borderThickness", 2);
         alpha = 1.00;
+	// XXX
+	// isis added responsesBlock
+	Responses.doGet(entryID,0,getResponseComplete);
       }
       else
       {
@@ -230,8 +240,23 @@ package flexlib.scheduling.scheduleClasses.renderers
         alpha = 0.60;
       }
     }
-
-
+	// XXX
+	private function getResponseComplete(result:Object):void {
+		if (result.error_text) {
+			Alert.show(result.error_text);
+		}
+		else {
+			var responsesData:ArrayCollection = new ArrayCollection();
+			var responsesBlock:responsesViewer = new responsesViewer();
+			import mx.core.FlexGlobals;
+			responsesData = PlurkParser.responsesParse(result);
+			FlexGlobals.topLevelApplication.addElement(responsesBlock);
+			responsesBlock.top = 0;
+			responsesBlock.right = 0;
+			responsesBlock.Responses.dataProvider = responsesData;
+		}
+		
+	}
     protected function setTextContent(content:SimpleScheduleEntry):void
     {
 //      if (!content.label)
@@ -277,7 +302,7 @@ package flexlib.scheduling.scheduleClasses.renderers
 //	this.validateNow();
 	//      this.width = content.width;
 //      this.setStyle("backgroundColor",0x3399cc);
-
+	this.entryID = content.plurk_id;
       updateSelected();
     }
 

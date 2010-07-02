@@ -46,6 +46,7 @@ POSSIBILITY OF SUCH DAMAGE.
 		public var qualifier_translated:String;
 		public var qualifier:String;
 		public var ownerImgUrl:String;
+		public var plurk_id:uint;
 //		public var width:int;
 //		private var __width:Number = 250;
 		private var _startDate : Date;

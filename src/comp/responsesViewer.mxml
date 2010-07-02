@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" width="600" height="300" xmlns:comp="comp.*">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import comp.addPlurkEditor;
+			
+			import uiDisplay.responseItem;
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:List itemRenderer="uiDisplay.responseItem" id="Responses">
+<!--	<s:layout>
+		<s:VerticalLayout variableRowHeight="false" rowHeight="50"/>
+	</s:layout>-->
+	</s:List>	
+	<comp:addPlurkEditor/>
+</s:BorderContainer>

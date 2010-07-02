@@ -18,7 +18,7 @@ package comp
 		 * @param callback
 		 * 
 		 */
-		public static function doGet(plurk_id:unit, from_response:int, callback:Function):void {
+		public static function doGet(plurk_id:uint, from_response:int, callback:Function):void {
 			PlurkBase.load(get,{plurk_id:plurk_id, from_response:from_response},callback);
 		}
 		/**
