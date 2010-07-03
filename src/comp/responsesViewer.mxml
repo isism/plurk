@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		   xmlns:s="library://ns.adobe.com/flex/spark" 
-		   xmlns:mx="library://ns.adobe.com/flex/mx" width="600" height="{this.Responses.height} " xmlns:comp="comp.*"
+		   xmlns:mx="library://ns.adobe.com/flex/mx" width="560" height="{this.Responses.height} " xmlns:comp="comp.*"
 		    borderVisible="false">
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
 	<fx:Script>
 		<![CDATA[
-			import comp.addPlurkEditor;
+			import comp.addResponseEditor;
 			
 			import mx.collections.ArrayCollection;
 			
@@ -19,10 +19,11 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:List itemRenderer="uiDisplay.responseItem" id="Responses" maxHeight="300">
+	<s:List itemRenderer="uiDisplay.responseItem" id="Responses" maxHeight="300" width="560">
 	<s:layout>
 		<s:VerticalLayout horizontalAlign="justify" />
 	</s:layout>
-	</s:List>	
+	</s:List>
+	<comp:addResponseEditor id="responseEditor"/>
 <!--	<comp:addPlurkEditor/>-->
 </s:BorderContainer>
