@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	 xmlns:s="library://ns.adobe.com/flex/spark" 
-	 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:comp="comp.*" xmlns:events="events.*">
+	 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:comp="comp.*" xmlns:events="events.*"
+	 >
 		
 	<s:layout>
 		<s:VerticalLayout/>
@@ -10,7 +11,7 @@
 		<![CDATA[
 			import comp.PlurkParser;
 			import comp.Responses;
-			import comp.addPlurkEditor;
+			import comp.addResponseEditor;
 			import comp.responsesViewer;
 			
 			import events.AddNewResponse;
@@ -31,16 +32,18 @@
 
 					Responses.doGet(this.plurk_id,0,getResponseComplete);
 					this.responsesPop.displayPopUp= true;
+					this.responseEditor.verb.prompt = ":";
+					this.responseEditor.smileys.prompt = ":-)";
+					this.responseEditor.validateNow();
+//					this.viewer.responseEditor.validateProperties();
 				}
 				else {
 					this.responsesPop.displayPopUp = false;
 				}
 			}			
 			
-			
 			private function addResponseListener():void{
-				this.viewer.responseEditor.addEventListener("addResponse",addNewResponseEventHandler);
-				this.viewer.responseEditor.plurk_id = this.plurk_id;
+				this.responseEditor.addEventListener("addResponse",addNewResponseEventHandler);
 			}
 			
 			private function addNewResponseEventHandler(e:AddNewResponse):void {		
@@ -48,6 +51,7 @@
 //					Responses.doGet(e.target.plurk_id,0,getResponseComplete);
 					this.responsesPop.displayPopUp= true;
 			}
+			
 			private function getResponseComplete(result:Object):void {
 				if (result.error_text) {
 					Alert.show(result.error_text);
@@ -66,7 +70,12 @@
 		]]>
 	</fx:Script>
 		
-	<s:ToggleButton id="btn_resCount" label="{this.responsesCount.toString()+ '回應'}" click="toggleResponses(event)"/>
+	
+	<s:ToggleButton id="btn_resCount" width="50" label="{this.responsesCount.toString()}" click="toggleResponses(event)">
+<!--		<s:styleName>
+			<s:Stroke color="0x6994bf" caps="square" weight="3" alpha="0.3"/>
+		</s:styleName>-->
+	</s:ToggleButton>
 	<s:PopUpAnchor id="responsesPop" popUpPosition="right">
 		<s:BorderContainer>
 			<s:layout>
@@ -76,6 +85,7 @@
 			<!--<comp:responsesViewer id="viewer" />-->
 			<comp:responsesViewer id="viewer" creationComplete="addResponseListener()" />
 			<!--<comp:addPlurkEditor/>-->
+			<comp:addResponseEditor id="responseEditor" plurk_id="{this.plurk_id}"/>
 		</s:BorderContainer>
 	</s:PopUpAnchor>
 	<fx:Declarations>

@@ -30,10 +30,6 @@
 
 package flexlib.scheduling.scheduleClasses.renderers
 {
-//  import comp.PlurkParser;
-//  import comp.Responses;
-//  import comp.responsesViewer;
-	
 	import comp.responsesPopUp;
 	
 	import flash.text.engine.Kerning;
@@ -281,7 +277,6 @@ package flexlib.scheduling.scheduleClasses.renderers
 	tlformet.kerning = flash.text.engine.Kerning.AUTO ;
 	tlformet.ligatureLevel = flash.text.engine.LigatureLevel.EXOTIC;
 	
-//      toolTip = time + "\n" + "isisSolid" + content.label;
       contentLabel.text = content.dispalyName;
       
 //      if (content.qualifier && contentQualifier.text == '') {

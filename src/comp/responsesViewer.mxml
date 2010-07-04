@@ -24,6 +24,6 @@
 		<s:VerticalLayout horizontalAlign="justify" />
 	</s:layout>
 	</s:List>
-	<comp:addResponseEditor id="responseEditor"/>
+	<!--<comp:addResponseEditor id="responseEditor"/>-->
 <!--	<comp:addPlurkEditor/>-->
 </s:BorderContainer>

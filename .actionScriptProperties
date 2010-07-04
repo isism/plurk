@@ -14,8 +14,6 @@
   </compiler>
   <applications>
     <application path="plurk.mxml"/>
-    <application path="plurkFX.mxml"/>
-    <application path="plurkFXline.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>

@@ -3,11 +3,12 @@
 	 xmlns:s="library://ns.adobe.com/flex/spark" 
 	 xmlns:mx="library://ns.adobe.com/flex/mx"
 	 xmlns:uiDisplay="uiDisplay" width="556" height="200" xmlns:uiDispaly="uiDispaly.*" xmlns:comp="comp.*"
-	   title="Add a  response" enabled="true">
+	   title="Add a  response" enabled="true" >
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
 	<fx:Metadata>
+		 [Event(name="plurk_idChange",type="flash.events.Event")] 
 		[Event(name="addResponse",type="events.AddNewResponse")]
 	</fx:Metadata>
 	<fx:Script>
@@ -22,21 +23,38 @@
 			import mx.controls.Alert;
 			import mx.core.UIComponent;
 			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
 			
 			import uiDisplay.verbContainer;
 			import uiDisplay.verbItem;
+			public static const PLURK_ID_CHANGE_EVENT:String = "plurk_idChange";
 			
-			[Bindable]
-			public var plurk_id:uint;
+//			[Bindable]
+			private var _plurk_id:uint;
+			
+
+ 			[Bindable(event="plurk_idChange")]
+			public function get plurk_id():uint
+			{
+				return _plurk_id;
+			}
+
+			public function set plurk_id(value:uint):void
+			{
+				if (_plurk_id != value) {
+					_plurk_id = value;
+					dispatchEvent(new Event(PLURK_ID_CHANGE_EVENT));
+				}
+			} 
+
 			
 			[Bindable]
 			private var verbProvider:ArrayCollection = new ArrayCollection([":","loves","likes","shares","gives","hates","wants","wishes","needs","will","hopes","asks","has","was","wonders","feels","thinks","says","is"]);
 			
-			private function addResponseEditorHandler():void {
-//				Timeline.doPlurkAdd(this.plurkContent.text,this.verb.selectedItem,plurkAddCompelete);
-				Responses.doResponseAdd(this.plurk_id,this.responseContent.text,this.verb.selectedItem, responseAddComplete);
+			public function addResponseEditorHandler():void {
+				Responses.doResponseAdd(this._plurk_id,this.responseContent.text,this.verb.selectedItem, responseAddComplete);
 			}
 			
 			private function responseAddComplete(result:Object):void {
@@ -71,6 +89,8 @@
 //			private function titleWindowCloseHandler(e:CloseEvent):void {
 //				PopUpManager.removePopUp(UIComponent(e.currentTarget));
 //			}
+
+
 
 		]]>
 	</fx:Script>
