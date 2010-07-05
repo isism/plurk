@@ -6,13 +6,18 @@
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
+	<fx:Metadata>
+		/* [Event(name="listData_Change",type="flash.events.Event")] */
+	</fx:Metadata>
 	<fx:Script>
 		<![CDATA[
 			import comp.addResponseEditor;
 			
 			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
 			
 			import uiDisplay.responseItem;
+			
 			
 		]]>
 	</fx:Script>
@@ -21,7 +26,7 @@
 	</fx:Declarations>
 	<s:List itemRenderer="uiDisplay.responseItem" id="Responses" maxHeight="300" width="560">
 	<s:layout>
-		<s:VerticalLayout horizontalAlign="justify" />
+		<s:VerticalLayout horizontalAlign="justify"/>
 	</s:layout>
 	</s:List>
 	<!--<comp:addResponseEditor id="responseEditor"/>-->

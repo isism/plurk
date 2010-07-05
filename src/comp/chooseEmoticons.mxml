@@ -6,6 +6,7 @@
 		 open="dropdownlistSmileys_openHandler(event)"
 		  labelFunction="smileyToLabel"
 		 itemRenderer="uiDisplay.smileysItem"
+		  selectedIndex="0"
 		 rollOver="dropdownlistSmileys_rollOverHandler(event)"
 		  click="dropdownlistSmileys_rollOverHandler(event)"
 		 creationComplete="init()">

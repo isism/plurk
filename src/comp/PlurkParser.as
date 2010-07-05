@@ -22,6 +22,8 @@ package comp
 	{
 		[Bindable]
 		private static var now:Date = new Date();
+		[Bindable]
+		public static var readResponsesOffset:uint;
 		public static function parse(result:Object):ArrayCollection{
 			var microData:Object;
 			var usersData:Object;
@@ -114,7 +116,7 @@ package comp
 			var friendsData:Object;
 //			var responsesArray:Array;
 			var TimeOffSet:Number;
-			var readResponsesOffset:uint;
+//			var readResponsesOffset:uint;
 			if(result.error_text)
 			{
 				//Error handler

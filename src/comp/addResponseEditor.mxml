@@ -105,7 +105,7 @@
 		<s:HorizontalLayout paddingLeft="10" paddingRight="10" paddingTop="10"/>
 	</s:layout>	
 	<s:Label text="{basicProfile.displayName}"/>
-	<s:DropDownList id="verb" width="80" prompt=":" chromeColor="{uiDisplay.verbContainer.colorOf(this.verb.selectedItem)}" dataProvider="{this.verbProvider}" click="verbListRollOverHandler(event)"
+	<s:DropDownList id="verb" width="80" selectedIndex="0" prompt=":" chromeColor="{uiDisplay.verbContainer.colorOf(this.verb.selectedItem)}" dataProvider="{this.verbProvider}" click="verbListRollOverHandler(event)"
 			 itemRenderer="uiDisplay.verbItem" rollOver="verbListRollOverHandler(event)" 
 			 open="UIComponent(verb.dropDown).maxHeight = NaN">
 	<!--		 rollOut="verbListRollOutHandler(event)">-->

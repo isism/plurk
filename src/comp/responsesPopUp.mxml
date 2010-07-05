@@ -18,6 +18,7 @@
 			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
+			import mx.events.FlexEvent;
 			
 			
 			[Bindable]
@@ -26,14 +27,21 @@
 			public var plurk_id:uint;
 			[Bindable]
 			private var ViewerVisible:Boolean = false;
+			[Bindable]
+			private var allItemsHeight:uint;
+			[Bindable]
+			private var readCount:uint;
 			
 			private function toggleResponses(e:Event):void {
 				if(e.target.selected){
 
 					Responses.doGet(this.plurk_id,0,getResponseComplete);
 					this.responsesPop.displayPopUp= true;
-					this.responseEditor.verb.prompt = ":";
-					this.responseEditor.smileys.prompt = ":-)";
+					this.responseEditor.verb.selectedIndex = 0;
+					this.responseEditor.smileys.selectedIndex = 0;
+					this.responseEditor.responseContent.text = "";
+//					this.responseEditor.verb.prompt = ":";
+//					this.responseEditor.smileys.prompt = ":-)";
 					this.responseEditor.validateNow();
 //					this.viewer.responseEditor.validateProperties();
 				}
@@ -60,13 +68,33 @@
 					var responsesData:ArrayCollection = new ArrayCollection();
 //					var responsesBlock:responsesViewer = new responsesViewer();
 //					import mx.core.FlexGlobals;
+//					this.readCount = uint(result.responses_seen);
 					responsesData = PlurkParser.responsesParse(result);
+					this.viewer.Responses.dataProvider = responsesData;
+					this.readCount = PlurkParser.readResponsesOffset;
 					this.responsesCount = responsesData.length;
 					this.btn_resCount.validateNow();
-					this.viewer.Responses.dataProvider = responsesData;
+					if (this.responsesCount != 0 && this.readCount !=0 ){
+						var i:uint;
+						do {
+							i = this.viewer.Responses.dataGroup.numElements;
+						}while ( i < this.responsesCount );
+						var self:* = this;
+						callLater(function():void{
+//							self.viewer.Responses.validateNow();
+							self.viewer.Responses.ensureIndexIsVisible(self.readCount-1);
+//							self.viewer.Responses.validateNow();
+						});
+					}
 				}
 				
 			}
+			
+//			protected function listDataRenderCompleteHandler(e:FlexEvent):void {
+//				this.allItemsHeight = this.viewer.Responses.dataGroup.contentHeight - this.viewer.Responses.height;
+				// XXX
+				
+//			}
 		]]>
 	</fx:Script>
 		
@@ -77,7 +105,7 @@
 		</s:styleName>-->
 	</s:ToggleButton>
 	<s:PopUpAnchor id="responsesPop" popUpPosition="right">
-		<s:BorderContainer>
+		<s:BorderContainer borderVisible="false">
 			<s:layout>
 				<s:VerticalLayout>
 				</s:VerticalLayout>

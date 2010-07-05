@@ -54,7 +54,7 @@
 			</s:layout>
 			<s:Label id="displayName" text="{data.display_name}" fontWeight="bold"/>
 			<uiDisplay:verbContainer id="qualifier" fontSize="15"/>
-			<s:Line width="{this.contentText.width-this.displayName.width-this.qualifier.width-10}" >
+			<s:Line width="{this.contentText.width-this.displayName.width-this.qualifier.width-13}" >
 				<s:stroke>
 					<s:SolidColorStroke color="0x6699cc" caps="round"
 							     weight="3" alpha="0.5"/>
