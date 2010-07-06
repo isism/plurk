@@ -10,6 +10,40 @@
 	<fx:Metadata>
 		[Event(name="addPlurk",type="events.AddNewPlurk")]
 	</fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[
+			protected function buttonbarTypo_changeHandler(e:IndexChangeEvent):void
+			{
+				var Typo:String = e.target.selectedItem;
+				var Caret:int;
+				switch (Typo) {
+					case "I":
+						this.plurkContent.insertText("**");
+						Caret = this.plurkContent.selectionActivePosition -1;
+						this.plurkContent.selectRange(Caret,Caret);
+						this.plurkContent.setFocus();
+					break;
+					case "B":
+						this.plurkContent.insertText("****");
+						Caret = this.plurkContent.selectionActivePosition -2;
+						this.plurkContent.selectRange(Caret,Caret);
+						this.plurkContent.setFocus();
+					break;
+					case "U":
+						this.plurkContent.insertText("____");
+						Caret = this.plurkContent.selectionActivePosition -2;
+						this.plurkContent.selectRange(Caret,Caret);
+						this.plurkContent.setFocus();
+					break;
+					default:
+				}
+				// TODO Auto-generated method stub
+				
+			}
+		]]>
+	</fx:Script>
+
 	<fx:Script>
 		<![CDATA[
 			import comp.Timeline;
@@ -24,7 +58,6 @@
 			import mx.managers.PopUpManager;
 			
 			import spark.events.IndexChangeEvent;
-			
 			
 			import uiDisplay.verbContainer;
 			import uiDisplay.verbItem;
@@ -89,11 +122,22 @@
 			<s:VerticalLayout horizontalAlign="center" requestedRowCount="{this.verbProvider.length}"/>
 		</s:layout>
 	</s:DropDownList>
+		<s:Group>
 	<s:TextArea id="plurkContent" minHeight="100">
-		
 	</s:TextArea>
+		</s:Group>
 	<comp:chooseEmoticons id="smileys" change="smileys_changeHandler(event)" />
 
 	<s:Button label="Plurk" click="addPlurkEditorHandler()"/>
 	</s:BorderContainer>
+	<s:ButtonBar change="buttonbarTypo_changeHandler(event)">
+		
+		<s:dataProvider>
+			<s:ArrayCollection>
+				<fx:String id="I">I</fx:String>
+				<fx:String id="B">B</fx:String>
+				<fx:String id="U">U</fx:String>
+			</s:ArrayCollection>
+		</s:dataProvider>
+	</s:ButtonBar>			
 </s:TitleWindow>
