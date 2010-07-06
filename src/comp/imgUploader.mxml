@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	       xmlns:s="library://ns.adobe.com/flex/spark" 
+	       xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+	        creationComplete="init()"  close="titleWindowCloseHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.serialization.json.JSON;
+			
+			import comp.Timeline;
+			
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			private var fileRef:FileReference = new FileReference();
+			
+			
+
+			protected function btn_choose_clickHandler(event:MouseEvent):void
+			{
+//				var fileFilter:Array = [];
+//				fileFilter.push(new FileFilter("Images", ".gif;*.jpeg;*.jpg;*.png"));
+//				fileRef.browse(fileFilter);
+				fileRef.browse([new FileFilter("Images Formats (*.jpg,*.gif,*.png)", "*.jpg;*.gif;*.png", "JPEG;jp2_;GIFF")]);
+			}
+			
+			
+
+
+			protected function init():void
+			{
+				fileRef.addEventListener(Event.SELECT, fileRef_select);
+//				fileRef.addEventListener(ProgressEvent.PROGRESS , uploadProgress_Handler);
+				fileRef.addEventListener(Event.COMPLETE, fileRef_complete);
+				fileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA , uploadImageComplete);
+				fileRef.addEventListener(IOErrorEvent.IO_ERROR, function(e:IOErrorEvent):void{
+					Alert.show(e.text);
+				});
+				fileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, function (e:HTTPStatusEvent):void{
+					Alert.show("HTTP Code: " + e.status.toString());
+				});
+				this.currentState = "beforeChooseImg";
+			}
+
+			private function fileRef_complete(e:Event):void {
+				img.source = fileRef.data;
+			 	this.fileinfo.text = fileRef.name + "size:" + int(fileRef.size / 1024) + "K";
+			}
+			
+			private function fileRef_select(e:Event):void {
+				fileRef.load();
+				this.currentState = "afterChooseImg";
+			}
+			
+			private function uploadProgress_Handler(e:ProgressEvent):void {
+//				progressBar.value = e.bytesLoaded / e.bytesTotal;
+//				progressBar.label = (e.bytesLoaded / e.bytesTotal).toString();
+			}
+
+			protected function btn_upload_clickHandler(e:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+//				Timeline.doUploadPicture(this.fileRef.data,uploadImageComplete);
+				var params:URLVariables = new URLVariables();
+				params.api_key = comp.PlurkBase.API_KEY;
+//				params.image = fileRef.data;
+				var request:URLRequest = new URLRequest("http://www.plurk.com"+Timeline.uploadPicture);
+				request.method = URLRequestMethod.POST;
+//				request.contentType = 
+				request.data = params;
+				fileRef.upload(request, 'image'); //fileRef.name);
+//				this.currentState = "upload";
+			}
+			
+			private function uploadImageComplete(e:DataEvent):void{
+				var result:Object;
+				result = JSON.deserialize(e.data.toString());
+				if(result.error_text)
+				{
+					//Error handler
+					//					trace(result.error_text);
+					Alert.show(result.error_text);
+				}
+				else
+				{
+					//Success
+					Alert.show(result.full);
+				}
+			}
+			
+			private function titleWindowCloseHandler(e:CloseEvent):void {
+				PopUpManager.removePopUp(UIComponent(e.currentTarget));
+			}
+
+		]]>
+	</fx:Script>
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<s:states>
+		<s:State name="beforeChooseImg"/>
+		<s:State name="afterChooseImg"/>
+		<s:State name="upload"/>
+	</s:states>
+	<s:Button id="btn_choose" label="Select a photo" click="btn_choose_clickHandler(event)"/>
+<!--	<s:BorderContainer>
+	<s:Label id="fileinfo"/>-->
+	<s:BorderContainer includeIn="afterChooseImg">
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+	<s:Label id="fileinfo" includeIn="afterChooseImg"/>
+	<!--<mx:ProgressBar id="progressBar"/>-->
+	<s:Button id="btn_upload" label="Upload" click="btn_upload_clickHandler(event)" includeIn="afterChooseImg"/> 
+	</s:BorderContainer>
+	<mx:Image id="img" width="400" height="300"/>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+</s:TitleWindow>

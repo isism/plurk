@@ -13,6 +13,10 @@
 
 	<fx:Script>
 		<![CDATA[
+			import comp.imgUploader;
+			
+			private var IMGuploader:imgUploader = new imgUploader();
+			
 			protected function buttonbarTypo_changeHandler(e:IndexChangeEvent):void
 			{
 				var Typo:String = e.target.selectedItem;
@@ -40,6 +44,12 @@
 				}
 				// TODO Auto-generated method stub
 				
+			}
+			
+			private function popUpImgUploaderHandler(e:MouseEvent):void {
+				PopUpManager.addPopUp(this.IMGuploader,this,true);
+				PopUpManager.centerPopUp(this.IMGuploader);
+				PopUpManager.bringToFront(this.IMGuploader);
 			}
 		]]>
 	</fx:Script>
@@ -139,5 +149,6 @@
 				<fx:String id="U">U</fx:String>
 			</s:ArrayCollection>
 		</s:dataProvider>
-	</s:ButtonBar>			
+	</s:ButtonBar>		
+	<s:Button id="uploadImg" click="popUpImgUploaderHandler(event)"/>
 </s:TitleWindow>

@@ -19,7 +19,7 @@ package comp
 		private static const mutePlurks:String = "/API/Timeline/mutePlurks";
 		private static const unmutePlurks:String = "/API/Timeline/unmutePlurks";
 		private static const markAsRead:String = "/API/Timeline/markAsRead";
-		private static const uploadPicture:String = "/API/Timeline/uploadPicture";
+		public static const uploadPicture:String = "/API/Timeline/uploadPicture";
 		
 		/**
 		 * 
@@ -140,7 +140,7 @@ package comp
 		 * @param callback
 		 * 
 		 */
-		public static function doUploadPicture(image:Image, callback:Function):void {
+		public static function doUploadPicture(image:*, callback:Function):void {
 			PlurkBase.load(uploadPicture,{image: image},callback);
 		}
 	}

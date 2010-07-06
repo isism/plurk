@@ -92,6 +92,12 @@ package com.plurkbridge
 			
 			this._callback = callback;
 			this._request = new URLRequest((isSecure ? BASE_URL_SECURE : BASE_URL) + method);	
+//			// XXX
+//			if(method != "/API/Timeline/uploadPicture") {
+//				this._request.method = URLRequestMethod.GET;
+//			else {
+//				this._request.method = URLRequestMethod.POST;
+//			}
 			this._request.method = URLRequestMethod.GET;
 			var variables:URLVariables = new URLVariables();
 			for (var o:String in parameters)
