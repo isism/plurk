@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	       xmlns:s="library://ns.adobe.com/flex/spark" 
+	       xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300"
+	        close="titleWindowCloseHandler(event)"
+	 	title="Share a link on Plurk">
+	<fx:Metadata>
+		[Event(name="addLinktoMain",type="events.AddNewLink")]		
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+			import events.AddNewLink;
+			import mx.controls.Alert;
+			
+//			[Bindable]
+			public var URL:String;
+//			[Bindable]
+			public var Caption:String;
+			
+			private function clickHandler():void {
+				URL = this.linkURL.text;
+				Caption = this.linkCaption.text;
+				if (/\S/.test(this.URL)){
+				var addNewLink:AddNewLink = new AddNewLink("addLinktoMain",true);
+				this.dispatchEvent(addNewLink);
+				this.linkURL.text = "";
+				this.linkCaption.text = "";
+				}
+				else {
+					Alert.show("Please enter a link...");
+				}
+
+			}
+			
+			private function titleWindowCloseHandler(e:CloseEvent):void {
+				PopUpManager.removePopUp(UIComponent(e.currentTarget));
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<s:Label text="Web address:"/>
+	<s:TextInput id="linkURL" width="200"/>
+	<s:Label text="Caption (optional):"/>
+	<s:TextInput id="linkCaption" width="200"/>
+	<s:Button id="autoLinkConfirm" label="Share link!" click="clickHandler()"/>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+</s:TitleWindow>
