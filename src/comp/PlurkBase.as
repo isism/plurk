@@ -3,6 +3,7 @@ package comp
 	public class PlurkBase
 	{
 		import com.plurkbridge.PlurkBridge;
+		public static var popUps:Array = [];
 		public static const API_KEY:String = "6yx2VCMDFrRIjRkHLlDbss45xQJJaGCn";
 		//private static var _plurkBridge:PlurkBridge = new PlurkBridge();
 		public static function load (method:String,  params:Object,  callback:Function, isSecure:Boolean=false):void {

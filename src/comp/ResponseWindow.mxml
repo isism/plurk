@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	       xmlns:s="library://ns.adobe.com/flex/spark" 
+	       xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:comp="comp.*"
+	       xmlns:events="events.*"
+	       close="titleWindowCloseHandler(event)">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import comp.PlurkParser;
+			import comp.Responses;
+			import comp.addResponseEditor;
+			import comp.entryPopUp;
+			import comp.responsesViewer;
+			import comp.Timeline;
+			
+			import events.AddNewResponse;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.CloseEvent;	
+			import mx.core.UIComponent;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			public var responsesCount:Number;
+			[Bindable]
+			public var plurk_id:uint;
+			[Bindable]
+			private var allItemsHeight:uint;
+			[Bindable]
+			private var readCount:uint;
+			
+			private function clickResponses(e:MouseEvent):void {
+//				if(e.target.selected){
+					
+					Responses.doGet(this.plurk_id,0,getResponseComplete);
+//					this.responsesPop.displayPopUp= true;
+					this.responseEditor.verb.selectedIndex = 0;
+					this.responseEditor.smileys.selectedIndex = 0;
+					this.responseEditor.responseContent.text = "";
+					//					this.responseEditor.verb.prompt = ":";
+					//					this.responseEditor.smileys.prompt = ":-)";
+					this.responseEditor.validateNow();
+					//					this.viewer.responseEditor.validateProperties();
+//				}
+//				else {
+//					this.responsesPop.displayPopUp = false;
+//				}
+			}			
+			
+			private function addResponseListener():void{
+				this.responseEditor.addEventListener("addResponse",addNewResponseEventHandler);
+			}
+			
+			private function addNewResponseEventHandler(e:AddNewResponse):void {		
+				Responses.doGet(this.plurk_id,0,getResponseComplete);
+				//					Responses.doGet(e.target.plurk_id,0,getResponseComplete);
+//				this.responsesPop.displayPopUp= true;
+			}
+			
+			private function getResponseComplete(result:Object):void {
+				if (result.error_text) {
+					Alert.show(result.error_text);
+				}
+				else {
+					var responsesData:ArrayCollection = new ArrayCollection();
+					//					var responsesBlock:responsesViewer = new responsesViewer();
+					//					import mx.core.FlexGlobals;
+					//					this.readCount = uint(result.responses_seen);
+					responsesData = PlurkParser.responsesParse(result);
+					this.viewer.Responses.dataProvider = responsesData;
+					this.readCount = PlurkParser.readResponsesOffset;
+					this.responsesCount = responsesData.length;
+					this.btn_resCount.validateNow();
+					if (this.responsesCount != 0 && this.readCount !=0 ){
+						var i:uint;
+						do {
+							i = this.viewer.Responses.dataGroup.numElements;
+						}while ( i < this.responsesCount );
+						var self:* = this;
+						callLater(function():void{
+							//							self.viewer.Responses.validateNow();
+							self.viewer.Responses.ensureIndexIsVisible(self.readCount-1);
+							//							self.viewer.Responses.validateNow();
+						});
+					}
+				}
+			}
+			
+			private function titleWindowCloseHandler(e:CloseEvent):void {
+				PopUpManager.removePopUp(UIComponent(e.currentTarget));
+			}
+		]]>
+	</fx:Script>
+	<s:Button  id="btn_resCount" width="50" label="{this.responsesCount.toString()}" click="clickResponses(event)"/> 
+	<comp:entryPopUp/>
+	<comp:responsesViewer  id="viewer" creationComplete="addResponseListener()"/>
+	<comp:addResponseEditor  id="responseEditor" plurk_id="{this.plurk_id}"/>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+</s:TitleWindow>

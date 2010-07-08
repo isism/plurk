@@ -2,7 +2,7 @@
 <s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	 xmlns:s="library://ns.adobe.com/flex/spark" 
 	 xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:comp="comp.*" xmlns:events="events.*"
-	 >
+	   creationComplete="init()">
 		
 	<s:layout>
 		<s:VerticalLayout/>
@@ -10,6 +10,7 @@
 	<fx:Script>
 		<![CDATA[
 			import comp.PlurkParser;
+			import comp.ResponseWindow;
 			import comp.Responses;
 			import comp.addResponseEditor;
 			import comp.responsesViewer;
@@ -20,23 +21,29 @@
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
 			
+			import mx.managers.PopUpManager;
+			
 			
 			[Bindable]
 			public var responsesCount:Number;
 			[Bindable]
 			public var plurk_id:uint;
-			[Bindable]
-			private var ViewerVisible:Boolean = false;
+//			[Bindable]
+//			private var ViewerVisible:Boolean = false;
 			[Bindable]
 			private var allItemsHeight:uint;
 			[Bindable]
 			private var readCount:uint;
 			
+			private var resWindow:ResponseWindow = new ResponseWindow();
+			
 			private function toggleResponses(e:Event):void {
 				if(e.target.selected){
-
+					this.currentState = "open";
 					Responses.doGet(this.plurk_id,0,getResponseComplete);
 					this.responsesPop.displayPopUp= true;
+					import comp.PlurkBase;
+					PlurkBase.popUps.push([btn_resCount, responsesPop]);
 					this.responseEditor.verb.selectedIndex = 0;
 					this.responseEditor.smileys.selectedIndex = 0;
 					this.responseEditor.responseContent.text = "";
@@ -44,9 +51,11 @@
 //					this.responseEditor.smileys.prompt = ":-)";
 					this.responseEditor.validateNow();
 //					this.viewer.responseEditor.validateProperties();
+					
 				}
 				else {
 					this.responsesPop.displayPopUp = false;
+					this.currentState = "close";
 				}
 			}			
 			
@@ -95,16 +104,35 @@
 				// XXX
 				
 //			}
+
+			protected function init():void
+			{
+				this.currentState = "close";
+			}
+			
+			protected function popUp_responseWindow(e:MouseEvent):void {
+				PopUpManager.addPopUp(this.resWindow,this,false);
+				PopUpManager.centerPopUp(this.resWindow);
+				PopUpManager.bringToFront(this.resWindow);
+				this.resWindow.plurk_id = this.plurk_id;
+				this.resWindow.responsesCount = this.responsesCount;
+			}
+
 		]]>
 	</fx:Script>
-		
+	<s:states>
+		<s:State name="close"/>
+		<s:State name="open"/>
+	</s:states>
 	
 	<s:ToggleButton id="btn_resCount" width="50" label="{this.responsesCount.toString()}" click="toggleResponses(event)">
 <!--		<s:styleName>
 			<s:Stroke color="0x6994bf" caps="square" weight="3" alpha="0.3"/>
 		</s:styleName>-->
 	</s:ToggleButton>
-	<s:PopUpAnchor id="responsesPop" popUpPosition="right">
+	<s:PopUpAnchor id="responsesPop" popUpPosition="right" includeIn="open" itemDestructionPolicy="auto">
+		<s:popUp>
+			
 		<s:BorderContainer borderVisible="false">
 			<s:layout>
 				<s:VerticalLayout>
@@ -114,7 +142,9 @@
 			<comp:responsesViewer id="viewer" creationComplete="addResponseListener()" />
 			<!--<comp:addPlurkEditor/>-->
 			<comp:addResponseEditor id="responseEditor" plurk_id="{this.plurk_id}"/>
+			<s:Button id="responseWindow" label="link" click="popUp_responseWindow(event)"/>
 		</s:BorderContainer>
+		</s:popUp>
 	</s:PopUpAnchor>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
