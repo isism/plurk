@@ -24,6 +24,7 @@ package comp
 		private static var now:Date = new Date();
 		[Bindable]
 		public static var readResponsesOffset:uint;
+		
 		public static function parse(result:Object):ArrayCollection{
 			var microData:Object;
 			var usersData:Object;
@@ -109,6 +110,7 @@ package comp
 			}
 				return addEntryData;
 		}
+		
 		
 		public static function responsesParse(result:Object):ArrayCollection {
 			
@@ -200,6 +202,68 @@ package comp
 			}
 			return addEntryData;
 		}
+		
+		public static function SingleParse(result:Object):Object{
+			var plurkData:Object;
+			var userData:Object;
+			if(result.error_text)
+			{
+				//Error handler
+				//					trace(result.error_text);
+				Alert.show(result.error_text);
+			}
+			else
+			{
+				//Success
+				//					trace(result.user_info.display_name);
+				plurkData = result.plurk;
+				userData = result.user;
+				
+				var addEntryData:Object = new Object();
+				var j:Number = plurkData.user_id;
+				var z:String = j.toString();
+				var userProfile:Object= new Object();
+				userProfile = userData;
+				if(userProfile.has_profile_image == 1 && userProfile.avatar == (null||0)){
+					//									entry.ownerImgUrl = "http://avatars.plurk.com/"+z+"-small.gif";
+//					userData.ownerImgUrl = "http://avatars.plurk.com/"+z+"-big.gif";
+					userData.ownerImgUrl = "http://avatars.plurk.com/"+z+"-medium.gif";
+				}
+				else if(userProfile.has_profile_image == 1 && userProfile.avatar != (null&&0)){
+					//									entry.ownerImgUrl = "http://avatars.plurk.com/" + z + "-small" +userProfile.avatar +".gif";
+//					userData.ownerImgUrl = "http://avatars.plurk.com/" + z+ "-big" +userProfile.avatar +".gif";
+					userData.ownerImgUrl = "http://avatars.plurk.com/" + z+ "-medium" +userProfile.avatar +".gif";
+				}
+				else if(userProfile.has_profile_image == 0){
+					//									entry.ownerImgUrl = "http://www.plurk.com/static/default_small.gif";
+//					userData.ownerImgUrl = "http://www.plurk.com/static/default_big.gif";
+					userData.ownerImgUrl = "http://www.plurk.com/static/default_medium.gif";
+				}
+				var limited:String = plurkData.limited_to;
+				var entryBGcolor:int;
+				switch(limited){
+					case null:
+						entryBGcolor = 0xFFFFFF;
+						//white
+						break;
+					case "|0|":
+						entryBGcolor = 0x99CCFF;
+						//light blue
+						break;
+					default:
+						entryBGcolor = 0x999999;
+						//grey
+						break;
+				}
+				plurkData.backgroundColor = entryBGcolor;
+				addEntryData.user = userData;
+				addEntryData.plurk = plurkData;
+//				addEntryData.addItem(userData);
+//				addEntryData.addItem(plurkData);
+			}
+		return addEntryData;
+		}
+	
 		
 		public function PlurkParser(target:IEventDispatcher=null)
 		{

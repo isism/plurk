@@ -284,9 +284,6 @@ package flexlib.scheduling.scheduleClasses.renderers
 			responsePopUp.responsesCount = this.responsesCount;
 			responsePopUp.plurk_id = this.entryID;
 			
-//			responsePopUp.addEventListener("scrollingNow",closeResponsePopUp);
-//			responseWindow.responsesCount = this.responsesCount;
-//			responseWindow.plurk_id = this.entryID;
 			updateSelected();
 		}
 		

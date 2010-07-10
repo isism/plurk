@@ -35,8 +35,6 @@
 			[Bindable]
 			private var readCount:uint;
 			
-			private var resWindow:ResponseWindow = new ResponseWindow();
-			
 			private function toggleResponses(e:Event):void {
 				if(e.target.selected){
 					this.currentState = "open";
@@ -111,11 +109,12 @@
 			}
 			
 			protected function popUp_responseWindow(e:MouseEvent):void {
-				PopUpManager.addPopUp(this.resWindow,this,false);
-				PopUpManager.centerPopUp(this.resWindow);
-				PopUpManager.bringToFront(this.resWindow);
-				this.resWindow.plurk_id = this.plurk_id;
-				this.resWindow.responsesCount = this.responsesCount;
+				var resWindow:ResponseWindow = new ResponseWindow();
+				resWindow.plurk_id = this.plurk_id;
+				resWindow.responsesCount = this.responsesCount;
+				PopUpManager.addPopUp(resWindow,this,false);
+				PopUpManager.centerPopUp(resWindow);
+				PopUpManager.bringToFront(resWindow);
 			}
 
 		]]>

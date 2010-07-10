@@ -6,9 +6,6 @@
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
-	<fx:Metadata>
-		/* [Event(name="listData_Change",type="flash.events.Event")] */
-	</fx:Metadata>
 	<fx:Script>
 		<![CDATA[
 			import comp.addResponseEditor;

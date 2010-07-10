@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		   xmlns:s="library://ns.adobe.com/flex/spark" 
-		   xmlns:mx="library://ns.adobe.com/flex/mx" width="560" xmlns:uiDisplay="uiDisplay.*">
+		   xmlns:mx="library://ns.adobe.com/flex/mx" width="560"
+		   height="{this.topContainer.height + this.bottomContainer.height +20}" 
+		   xmlns:uiDisplay="uiDisplay.*"
+		   >
+	<s:borderStroke >
+		<s:SolidColorStroke color="0xdddddd" alpha="0.5" joints="bevel" weight="5"/>
+	</s:borderStroke>
 	<fx:Script>
 		<![CDATA[
 			import uiDisplay.verbContainer;
+			
+			
 		]]>
 	</fx:Script>
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
-	<s:BorderContainer height="20">
-	<s:Label/>
-	<uiDisplay:verbContainer/>
+	<s:BorderContainer id="topContainer" height="20" borderVisible="false">
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+	<s:Label id="displayName"/>
+	<uiDisplay:verbContainer id="qualifier"/>
 	</s:BorderContainer>
 	
-	<s:BorderContainer>
-		<mx:Image/>
-		<s:RichEditableText/>
+	<s:BorderContainer id="bottomContainer" borderVisible="false" height="{Math.max(this.userImg.height,this.content.height)}">
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+		<mx:Image id="userImg"/>
+		<s:RichEditableText id="content" width="470"/>
 	</s:BorderContainer>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->

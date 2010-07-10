@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	       xmlns:s="library://ns.adobe.com/flex/spark" 
-	       xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:comp="comp.*"
+	       xmlns:mx="library://ns.adobe.com/flex/mx" width="562" height="300" xmlns:comp="comp.*"
 	       xmlns:events="events.*"
-	       close="titleWindowCloseHandler(event)">
+	       close="titleWindowCloseHandler(event)"
+	       creationComplete="init()">
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
@@ -11,18 +12,28 @@
 		<![CDATA[
 			import comp.PlurkParser;
 			import comp.Responses;
+			import comp.Timeline;
 			import comp.addResponseEditor;
 			import comp.entryPopUp;
 			import comp.responsesViewer;
-			import comp.Timeline;
 			
 			import events.AddNewResponse;
 			
+			import flash.text.engine.Kerning;
+			import flash.text.engine.LigatureLevel;
+			import flash.text.engine.LineJustification;
+			
+			import flashx.textLayout.conversion.TextConverter;
+			import flashx.textLayout.formats.Float;
+			import flashx.textLayout.formats.LeadingModel;
+			import flashx.textLayout.formats.TextLayoutFormat;
+			
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
-			import mx.events.FlexEvent;
-			import mx.events.CloseEvent;	
+			import mx.controls.Label;
 			import mx.core.UIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
 			
 			[Bindable]
@@ -33,6 +44,39 @@
 			private var allItemsHeight:uint;
 			[Bindable]
 			private var readCount:uint;
+			
+			private var qualifierLabel:Label = new Label();
+			
+			private function init():void {
+				Timeline.doGetPlurk(this.plurk_id,getPlurkComplete);
+				Responses.doGet(this.plurk_id,0,getResponseComplete);
+			}
+			
+			private function getPlurkComplete(result:Object):void {
+				var getPlurkData:Object;
+				getPlurkData = PlurkParser.SingleParse(result);
+				this.entry.displayName.text = getPlurkData.user.display_name;
+				this.entry.displayName.setStyle("fontWeight","bold");
+				this.entry.displayName.setStyle("fontSize",14);
+				this.entry.qualifier.verb = getPlurkData.plurk.qualifier;
+				
+				qualifierLabel.text = getPlurkData.plurk.qualifier;
+				this.entry.qualifier.addElement(qualifierLabel);
+				this.entry.qualifier.width = this.btn_resCount.measureText(qualifierLabel.text).width + 10;
+				this.entry.userImg.source = getPlurkData.user.ownerImgUrl;
+				var tlformet:TextLayoutFormat = new TextLayoutFormat();
+				tlformet.fontSize = 16;
+				tlformet.kerning = flash.text.engine.Kerning.ON ;
+				tlformet.leadingModel = flashx.textLayout.formats.LeadingModel.IDEOGRAPHIC_TOP_DOWN;
+				tlformet.ligatureLevel = flash.text.engine.LigatureLevel.EXOTIC;
+				tlformet.lineHeight = 20;
+				
+				this.entry.content.editable = false;
+				//				var userImg:String = data.ownerImgUrl;
+				//				var userImg:String = "<img src=\"" +data.ownerImgUrl + "\">";
+				this.entry.content.textFlow = TextConverter.importToFlow(getPlurkData.plurk.content, TextConverter.TEXT_FIELD_HTML_FORMAT);
+				this.entry.content.textFlow.format = tlformet;
+			}
 			
 			private function clickResponses(e:MouseEvent):void {
 //				if(e.target.selected){
@@ -97,7 +141,7 @@
 		]]>
 	</fx:Script>
 	<s:Button  id="btn_resCount" width="50" label="{this.responsesCount.toString()}" click="clickResponses(event)"/> 
-	<comp:entryPopUp/>
+	<comp:entryPopUp id="entry"/>
 	<comp:responsesViewer  id="viewer" creationComplete="addResponseListener()"/>
 	<comp:addResponseEditor  id="responseEditor" plurk_id="{this.plurk_id}"/>
 	<fx:Declarations>
